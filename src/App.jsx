@@ -1,8 +1,8 @@
-import Login from './components/pages/Login.jsx'
+import Dashboard from './components/pages/Dashboard.jsx'
 
 function App() {
   return (
-    <Login />
+    <Dashboard />
   )
 }
 
