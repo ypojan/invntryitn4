@@ -1,6 +1,6 @@
 function Card({ title, total, image, icon }) {
   return (
-    <div className="bg-white rounded-xl shadow-md hover:shadow-lg transition p-6 relative">
+    <div className="bg-blue-100 rounded-xl shadow-md hover:shadow-lg transition p-6 relative">
       {/* Info Icon */}
       <button className="absolute top-4 right-4 w-6 h-6 border-2 border-gray-400 rounded-full flex items-center justify-center text-gray-400 hover:border-gray-600 hover:text-gray-600 transition">
         <span className="text-sm font-bold">i</span>
