@@ -62,7 +62,7 @@ export default function EditDataBarang() {
       <div className="bg-white rounded-lg shadow-xl z-50 w-full max-w-xl relative">
         {/* Header Modal */}
         <div className="flex items-center justify-between p-6 border-b">
-          <h2 className="text-xl font-semibold text-gray-800">Tambah Data Barang</h2>
+          <h2 className="text-xl font-semibold text-gray-800">Edit Data Barang</h2>
           <button
             onClick={handleBatal}
             className="w-8 h-8 flex items-center justify-center rounded-full bg-red-500 hover:bg-red-600 text-white transition-colors"
@@ -155,4 +155,4 @@ export default function EditDataBarang() {
       </div>
     </div>
   );
-} 
+}
