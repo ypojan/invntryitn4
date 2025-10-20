@@ -1,8 +1,8 @@
-import Dashboard from './components/pages/Dashboard.jsx'
+import TambahData from './components/pages/TambahData.jsx'
 
 function App() {
   return (
-    <Dashboard />
+    <TambahData />
   )
 }
 

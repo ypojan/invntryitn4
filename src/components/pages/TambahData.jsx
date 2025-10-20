@@ -1,10 +1,49 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import Header from '../common/Header.jsx';
+import Card from '../common/Card.jsx';
 
 export default function EditDataBarang() {
   // Data yang akan di-edit (contoh data existing)
   const [namaBarang, setNamaBarang] = useState('Laptop');
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewImage, setPreviewImage] = useState(null);
+
+  // Prevent scrolling when modal is open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
+  // Data dummy untuk dashboard
+  const inventoryItems = [
+    {
+      title: "Laptop",
+      total: 35,
+      image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&q=80",
+    },
+    {
+      title: "Komputer",
+      total: 50,
+      image: "https://images.unsplash.com/photo-1587202372634-32705e3bf49c?w=400&q=80",
+    },
+    {
+      title: "Sparepart",
+      total: 27,
+      image: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=400&q=80",
+    },
+    {
+      title: "Mesin Printer",
+      total: 6,
+      image: "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?w=400&q=80",
+    },
+    {
+      title: "Projector",
+      total: 20,
+      image: "https://images.unsplash.com/photo-1593642532400-2682810df593?w=400&q=80",
+    },
+  ];
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -54,12 +93,54 @@ export default function EditDataBarang() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
-      {/* Overlay Background */}
+    <div className="min-h-screen bg-gray-50 overflow-hidden">
+      {/* Header */}
+      <Header />
+
+      {/* Content Area */}
+      <div className="p-8">
+        {/* Title and Button */}
+        <div className="flex items-center justify-between mb-8">
+          <h1 className="text-3xl font-bold text-gray-800">
+            Master Data Seluruh Barang
+          </h1>
+
+          <button className="bg-slate-700 hover:bg-slate-800 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition shadow-md">
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
+              />
+            </svg>
+            <span className="font-semibold">Tambah Data</span>
+          </button>
+        </div>
+
+        {/* Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          {inventoryItems.map((item, index) => (
+            <Card
+              key={index}
+              title={item.title}
+              total={item.total}
+              image={item.image}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Modal Overlay */}
       <div className="fixed inset-0 bg-black bg-opacity-50 z-40"></div>
 
-      {/* Modal */}
-      <div className="bg-white rounded-lg shadow-xl z-50 w-full max-w-xl relative">
+      {/* Modal Edit Data */}
+      <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg shadow-xl z-50 w-full max-w-xl mx-4">
         {/* Header Modal */}
         <div className="flex items-center justify-between p-6 border-b">
           <h2 className="text-xl font-semibold text-gray-800">Tambah Data Barang</h2>
@@ -155,4 +236,4 @@ export default function EditDataBarang() {
       </div>
     </div>
   );
-} 
+}
