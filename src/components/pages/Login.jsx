@@ -5,7 +5,6 @@ import logo3 from "../../assets/ptpn4.png";
 import { useState } from "react";
 
 function Login({ onLogin }) {
-  // ← tambah props
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -13,14 +12,12 @@ function Login({ onLogin }) {
   const handleLogin = (e) => {
     e.preventDefault();
     console.log("Login clicked", { username, password });
-    onLogin(); // ← panggil function dari App.jsx
   };
 
   // ... rest of code tetap sama
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      {/* Background Image - pakai import */}
       <div
         className="absolute inset-0 z-0"
         style={{

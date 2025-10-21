@@ -2,6 +2,7 @@ import backgroundImg from "../../assets/background.jpg";
 import logo1 from "../../assets/logo_Holding-2.png";
 import logo2 from "../../assets/bumn.png";
 import logo3 from "../../assets/ptpn4.png";
+
 function Sidebar() {
   const menuItems = [
     {
@@ -43,6 +44,44 @@ function Sidebar() {
       active: false,
     },
     {
+      name: "Peminjaman",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"
+          />
+        </svg>
+      ),
+      active: false,
+    },
+    {
+      name: "Pengembalian",
+      icon: (
+        <svg
+          className="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M16 15v-1a4 4 0 00-4-4H8m0 0l3 3m-3-3l3-3m9 14V5a2 2 0 00-2-2H6a2 2 0 00-2 2v16l4-2 4 2 4-2 4 2z"
+          />
+        </svg>
+      ),
+      active: false,
+    },
+    {
       name: "History",
       icon: (
         <svg
@@ -77,8 +116,8 @@ function Sidebar() {
             </div>
           </div>
           <div>
-              <img src={logo3} alt="Logo 3" className="h-12 w-auto" />
-            </div>
+            <img src={logo3} alt="Logo 3" className="h-12 w-auto" />
+          </div>
         </div>
       </div>
 
