@@ -1,4 +1,4 @@
-import backgroundImg from "../../assets/background.jpg";
+import backgroundVideo from "../../assets/bgvidio.mp4";
 import logo1 from "../../assets/logo_Holding-2.png";
 import logo2 from "../../assets/bumn.png";
 import logo3 from "../../assets/ptpn4.png";
@@ -12,33 +12,35 @@ function Login({ onLogin }) {
   const handleLogin = (e) => {
     e.preventDefault();
     console.log("Login clicked", { username, password });
+    onLogin();
   };
-
-  // ... rest of code tetap sama
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      <div
-        className="absolute inset-0 z-0"
-        style={{
-          backgroundImage: `url(${backgroundImg})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
+      {/* 🎥 Background Video */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover"
+          src={backgroundVideo}
+        />
+        {/* Overlay warna biru transparan */}
         <div className="absolute inset-0 bg-blue-900/40"></div>
       </div>
 
       {/* Login Form */}
-      <div className="relative z-10 w-full max-w-md mx-4">
-        <div className="bg-white/10 backdrop-blur-md rounded-2xl p-8 border border-white/20 shadow-2xl">
-          <form onSubmit={handleLogin} className="space-y-6">
+      <div className="relative z-10 w-full max-w-xl mx-4">
+        <div className="bg-white/10 backdrop-blur-md rounded-3xl p-12 border border-white/20 shadow-2xl">
+          <form onSubmit={handleLogin} className="space-y-8">
             {/* Username Input */}
             <div>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70">
+                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-white/70">
                   <svg
-                    className="w-5 h-5"
+                    className="w-6 h-6"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -56,7 +58,7 @@ function Login({ onLogin }) {
                   placeholder="Username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-white/20 border border-white/30 rounded-lg px-12 py-3 text-white placeholder-white/60 focus:outline-none focus:border-white/50 focus:bg-white/25 transition"
+                  className="w-full bg-white/20 border border-white/30 rounded-xl px-14 py-4 text-white text-lg placeholder-white/60 focus:outline-none focus:border-white/50 focus:bg-white/25 transition"
                 />
               </div>
             </div>
@@ -64,9 +66,9 @@ function Login({ onLogin }) {
             {/* Password Input */}
             <div>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70">
+                <span className="absolute left-5 top-1/2 -translate-y-1/2 text-white/70">
                   <svg
-                    className="w-5 h-5"
+                    className="w-6 h-6"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -84,16 +86,16 @@ function Login({ onLogin }) {
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white/20 border border-white/30 rounded-lg px-12 py-3 text-white placeholder-white/60 focus:outline-none focus:border-white/50 focus:bg-white/25 transition"
+                  className="w-full bg-white/20 border border-white/30 rounded-xl px-14 py-4 text-white text-lg placeholder-white/60 focus:outline-none focus:border-white/50 focus:bg-white/25 transition"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition"
+                  className="absolute right-5 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition"
                 >
                   {showPassword ? (
                     <svg
-                      className="w-5 h-5"
+                      className="w-6 h-6"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -107,7 +109,7 @@ function Login({ onLogin }) {
                     </svg>
                   ) : (
                     <svg
-                      className="w-5 h-5"
+                      className="w-6 h-6"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -133,17 +135,17 @@ function Login({ onLogin }) {
             {/* Login Button */}
             <button
               type="submit"
-              className="w-full bg-white text-blue-600 font-semibold py-3 rounded-lg hover:bg-blue-50 transition shadow-lg"
+              className="w-full bg-white text-blue-600 font-bold text-lg py-4 rounded-xl hover:bg-blue-50 transition shadow-lg"
             >
               Login
             </button>
           </form>
 
           {/* Logo - pakai import */}
-          <div className="flex items-center justify-center gap-4 mt-8">
-            <img src={logo1} alt="Logo 1" className="h-8 w-auto" />
-            <img src={logo2} alt="Logo 2" className="h-8 w-auto" />
-            <img src={logo3} alt="Logo 3" className="h-10 w-auto" />
+          <div className="flex items-center justify-center gap-6 mt-10">
+            <img src={logo1} alt="Logo 1" className="h-10 w-auto" />
+            <img src={logo2} alt="Logo 2" className="h-10 w-auto" />
+            <img src={logo3} alt="Logo 3" className="h-12 w-auto" />
           </div>
         </div>
       </div>

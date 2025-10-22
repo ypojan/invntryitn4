@@ -89,7 +89,7 @@ function Dashboard() {
             </div>
 
             {/* Tambah Data Button */}
-            <button className="bg-slate-700 hover:bg-slate-800 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition shadow-md ml-auto">
+            <button className="bg-slate-700 hover:bg-slate-800 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition shadow-xl ml-auto">
               <svg
                 className="w-5 h-5"
                 fill="none"
@@ -120,7 +120,7 @@ function Dashboard() {
           </div>
 
           {/* Status Kondisi Barang Section */}
-          <div className="bg-white rounded-xl shadow-md p-8">
+          <div className="bg-blue-100 rounded-xl shadow-md p-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-6">
               Status Kondisi Barang
             </h2>
@@ -204,14 +204,9 @@ function Dashboard() {
                   />
                 </svg>
 
-                {/* Center white circle */}
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-32 h-32 bg-white rounded-full"></div>
-                </div>
-
                 {/* Percentage labels on chart with glassmorphism */}
                 {/* Rusak - 15% (Top Right) */}
-                <div className="absolute top-8 right-4">
+                <div className="absolute top-1 left-12 -translate-y-1/2">
                   <div className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-lg px-3 py-1 shadow-lg">
                     <span className="text-red-500 font-bold text-base">
                       15%
@@ -219,20 +214,20 @@ function Dashboard() {
                   </div>
                 </div>
 
-                {/* Diperbaiki - 25% (Bottom Right) */}
-                <div className="absolute bottom-8 right-4">
+                {/* Diperbaiki - 60% (Bottom Right) */}
+                <div className="absolute bottom-8 right-3">
                   <div className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-lg px-3 py-1 shadow-lg">
-                    <span className="text-blue-600 font-bold text-base">
-                      25%
+                    <span className="text-sky-400 font-bold text-base">
+                      60%
                     </span>
                   </div>
                 </div>
 
-                {/* Bagus - 60% (Left) */}
-                <div className="absolute top-1/2 left-2 -translate-y-1/2">
+                {/* Bagus - 25% (Left) */}
+                <div className="absolute top-1/2 -left-10 -translate-y-1/2">
                   <div className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-lg px-3 py-1 shadow-lg">
-                    <span className="text-sky-400 font-bold text-base">
-                      60%
+                    <span className="text-blue-600 font-bold text-base">
+                      25%
                     </span>
                   </div>
                 </div>
