@@ -103,7 +103,7 @@ function Sidebar() {
   ];
 
   return (
-     <div className="w-64 min-h-screen bg-slate-700 text-white sticky top-0 h-screen overflow-y-auto">
+    <div className="w-64 min-h-screen bg-slate-700 text-white sticky top-0 h-screen overflow-y-auto">
       {/* Logo Section */}
       <div className="p-6 border-b border-slate-600">
         <div className="flex items-center gap-3">

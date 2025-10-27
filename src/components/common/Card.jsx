@@ -1,6 +1,6 @@
 function Card({ title, total, image, icon }) {
   return (
-    <div className="bg-blue-100 rounded-xl shadow-xl hover:shadow-lg transition p-3 relative max-w-[350px]">
+    <div className="bg-blue-100 rounded-xl shadow-xl hover:shadow-lg transition p-5 relative max-w-[350px]">
       {/* Three Dots Icon */}
       <button className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition">
         <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -16,7 +16,7 @@ function Card({ title, total, image, icon }) {
         <h3 className="text-lg font-semibold text-gray-800 mb-4">{title}</h3>
 
         {/* Image/Icon */}
-        <div className="w-56 h-56 mb-4 flex items-center justify-center">
+        <div className="w-36 h-36 mb-4 flex items-center justify-center">
           {image ? (
             <img src={image} alt={title} className="w-full h-full object-contain" />
           ) : (

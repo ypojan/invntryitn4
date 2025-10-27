@@ -38,13 +38,13 @@ function Dashboard() {
 
   // Data untuk chart
   const statusData = [
-    { label: "Bagus", percentage: 60, color: "bg-sky-400" },
-    { label: "Diperbaiki", percentage: 25, color: "bg-blue-600" },
-    { label: "Rusak", percentage: 15, color: "bg-red-500" },
+    { label: "Bagus", percentage: 60, color: "#40B7FE" },
+    { label: "Diperbaiki", percentage: 25, color: "#234FEA" },
+    { label: "Rusak", percentage: 15, color: "#E62727" },
   ];
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+    <div className="flex min-h-screen" style={{ backgroundColor: "#F9FAFB" }}>
       {/* Sidebar */}
       <Sidebar />
 
@@ -53,10 +53,10 @@ function Dashboard() {
         {/* Header */}
         <Header />
 
-        {/* Content Area */}
-        <div className="p-8">
+        {/* Content Area - Padding lebih besar untuk center */}
+        <div className="py-8 px-16">
           {/* Title */}
-          <h1 className="text-3xl font-bold text-gray-800 mb-6">
+          <h1 className="text-3xl font-bold mb-6" style={{ color: "#1F2937" }}>
             Master Data Seluruh Barang
           </h1>
 
@@ -68,9 +68,24 @@ function Dashboard() {
                 <input
                   type="text"
                   placeholder="Search..."
-                  className="w-full bg-white border border-gray-300 rounded-full px-6 py-3 pr-12 focus:outline-none focus:border-gray-400 transition"
+                  className="w-full rounded-full px-6 py-3 pr-12 focus:outline-none transition"
+                  style={{
+                    backgroundColor: "#FFFFFF",
+                    border: "1px solid #D1D5DB",
+                  }}
+                  onFocus={(e) => (e.target.style.borderColor = "#9CA3AF")}
+                  onBlur={(e) => (e.target.style.borderColor = "#D1D5DB")}
                 />
-                <button className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                <button
+                  className="absolute right-4 top-1/2 -translate-y-1/2"
+                  style={{ color: "#9CA3AF" }}
+                  onMouseEnter={(e) =>
+                    (e.currentTarget.style.color = "#4B5563")
+                  }
+                  onMouseLeave={(e) =>
+                    (e.currentTarget.style.color = "#9CA3AF")
+                  }
+                >
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -89,7 +104,16 @@ function Dashboard() {
             </div>
 
             {/* Tambah Data Button */}
-            <button className="bg-slate-700 hover:bg-slate-800 text-white px-6 py-3 rounded-lg flex items-center gap-2 transition shadow-xl ml-auto">
+            <button
+              className="px-6 py-3 rounded-lg flex items-center gap-2 transition shadow-xl ml-auto"
+              style={{ backgroundColor: "#334155", color: "#FFFFFF" }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.backgroundColor = "#1E293B")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.backgroundColor = "#334155")
+              }
+            >
               <svg
                 className="w-5 h-5"
                 fill="none"
@@ -120,8 +144,14 @@ function Dashboard() {
           </div>
 
           {/* Status Kondisi Barang Section */}
-          <div className="bg-blue-100 rounded-xl shadow-md p-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">
+          <div
+            className="rounded-xl shadow-md p-8"
+            style={{ backgroundColor: "#DBEAFE" }}
+          >
+            <h2
+              className="text-2xl font-bold mb-6"
+              style={{ color: "#1F2937" }}
+            >
               Status Kondisi Barang
             </h2>
 
@@ -130,21 +160,19 @@ function Dashboard() {
               <div className="flex-1 space-y-4">
                 {statusData.map((item, index) => (
                   <div key={index} className="flex items-center gap-3">
-                    <div className={`w-12 h-12 ${item.color} rounded`}></div>
+                    <div
+                      className="w-12 h-8"
+                      style={{
+                        backgroundColor: item.color,
+                        borderRadius: "12px",
+                      }}
+                    ></div>
                     <div>
-                      <div className="font-semibold text-gray-800">
-                        {item.label}
-                      </div>
                       <div
-                        className={`text-2xl font-bold ${
-                          item.label === "Bagus"
-                            ? "text-sky-400"
-                            : item.label === "Diperbaiki"
-                            ? "text-blue-600"
-                            : "text-red-500"
-                        }`}
+                        className="font-semibold"
+                        style={{ color: "#1F2937" }}
                       >
-                        {item.percentage}%
+                        {item.label}
                       </div>
                     </div>
                   </div>
@@ -163,7 +191,7 @@ function Dashboard() {
                     cy="50"
                     r="40"
                     fill="none"
-                    stroke="#f0f0f0"
+                    stroke="#F0F0F0"
                     strokeWidth="20"
                   />
 
@@ -173,7 +201,7 @@ function Dashboard() {
                     cy="50"
                     r="40"
                     fill="none"
-                    stroke="#38bdf8"
+                    stroke="#38BDF8"
                     strokeWidth="20"
                     strokeDasharray="150.8 251.2"
                     strokeDashoffset="0"
@@ -185,7 +213,7 @@ function Dashboard() {
                     cy="50"
                     r="40"
                     fill="none"
-                    stroke="#2563eb"
+                    stroke="#2563EB"
                     strokeWidth="20"
                     strokeDasharray="62.8 251.2"
                     strokeDashoffset="-150.8"
@@ -197,7 +225,7 @@ function Dashboard() {
                     cy="50"
                     r="40"
                     fill="none"
-                    stroke="#ef4444"
+                    stroke="#EF4444"
                     strokeWidth="20"
                     strokeDasharray="37.7 251.2"
                     strokeDashoffset="-213.6"
@@ -207,26 +235,53 @@ function Dashboard() {
                 {/* Percentage labels on chart with glassmorphism */}
                 {/* Rusak - 15% (Top Right) */}
                 <div className="absolute top-1 left-12 -translate-y-1/2">
-                  <div className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-lg px-3 py-1 shadow-lg">
-                    <span className="text-red-500 font-bold text-base">
+                  <div
+                    className="backdrop-blur-sm rounded-lg px-3 py-1 shadow-lg"
+                    style={{
+                      backgroundColor: "rgba(255, 255, 255, 0.8)",
+                      border: "1px solid rgba(255, 255, 255, 0.4)",
+                    }}
+                  >
+                    <span
+                      className="font-bold text-base"
+                      style={{ color: "#EF4444" }}
+                    >
                       15%
                     </span>
                   </div>
                 </div>
 
-                {/* Diperbaiki - 60% (Bottom Right) */}
+                {/* Bagus - 60% (Bottom Right) */}
                 <div className="absolute bottom-8 right-3">
-                  <div className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-lg px-3 py-1 shadow-lg">
-                    <span className="text-sky-400 font-bold text-base">
+                  <div
+                    className="backdrop-blur-sm rounded-lg px-3 py-1 shadow-lg"
+                    style={{
+                      backgroundColor: "rgba(255, 255, 255, 0.8)",
+                      border: "1px solid rgba(255, 255, 255, 0.4)",
+                    }}
+                  >
+                    <span
+                      className="font-bold text-base"
+                      style={{ color: "#38BDF8" }}
+                    >
                       60%
                     </span>
                   </div>
                 </div>
 
-                {/* Bagus - 25% (Left) */}
+                {/* Diperbaiki - 25% (Left) */}
                 <div className="absolute top-1/2 -left-10 -translate-y-1/2">
-                  <div className="bg-white/80 backdrop-blur-sm border border-white/40 rounded-lg px-3 py-1 shadow-lg">
-                    <span className="text-blue-600 font-bold text-base">
+                  <div
+                    className="backdrop-blur-sm rounded-lg px-3 py-1 shadow-lg"
+                    style={{
+                      backgroundColor: "rgba(255, 255, 255, 0.8)",
+                      border: "1px solid rgba(255, 255, 255, 0.4)",
+                    }}
+                  >
+                    <span
+                      className="font-bold text-base"
+                      style={{ color: "#2563EB" }}
+                    >
                       25%
                     </span>
                   </div>
