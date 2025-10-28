@@ -1,10 +1,13 @@
-import backgroundVideo from "../../assets/bgvidio.mp4";
-import logo1 from "../../assets/logo_Holding-2.png";
-import logo2 from "../../assets/bumn.png";
-import logo3 from "../../assets/ptpn4.png";
+// src/Page/Login.jsx
+
+import backgroundVideo from "../assets/bgvidio.mp4"; // (Pastikan path ../assets/ sudah benar dari folder Page)
+import logo1 from "../assets/logo_Holding-2.png";
+import logo2 from "../assets/bumn.png";
+import logo3 from "../assets/ptpn4.png";
 import { useState } from "react";
 
-function Login({ onLogin }) {
+// <<< PERUBAHAN DI SINI (1/2): Terima 'onLoginSuccess' (bukan 'onLogin')
+function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -12,7 +15,9 @@ function Login({ onLogin }) {
   const handleLogin = (e) => {
     e.preventDefault();
     console.log("Login clicked", { username, password });
-    onLogin();
+    
+    // <<< PERUBAHAN DI SINI (2/2): Panggil 'onLoginSuccess'
+    onLoginSuccess(); 
   };
 
   return (
