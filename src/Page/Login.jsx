@@ -1,12 +1,10 @@
 // src/Page/Login.jsx
 
-import backgroundVideo from "../assets/bgvidio.mp4"; // (Pastikan path ../assets/ sudah benar dari folder Page)
-import logo1 from "../assets/logo_Holding-2.png";
-import logo2 from "../assets/bumn.png";
-import logo3 from "../assets/ptpn4.png";
+import backgroundVideo from "../assets/bgvidio.mp4";
+import logoptpn4 from "../assets/logoptpn4.png";
 import { useState } from "react";
+import Swal from "sweetalert2";
 
-// <<< PERUBAHAN DI SINI (1/2): Terima 'onLoginSuccess' (bukan 'onLogin')
 function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -15,9 +13,18 @@ function Login({ onLoginSuccess }) {
   const handleLogin = (e) => {
     e.preventDefault();
     console.log("Login clicked", { username, password });
-    
-    // <<< PERUBAHAN DI SINI (2/2): Panggil 'onLoginSuccess'
-    onLoginSuccess(); 
+
+    Swal.fire({
+      title: "Berhasil!",
+      text: "Selamat datang kembali!",
+      icon: "success",
+      timer: 1500,
+      showConfirmButton: false,
+      background: "#fff",
+      color: "#333",
+    }).then(() => {
+      onLoginSuccess();
+    });
   };
 
   return (
@@ -32,13 +39,17 @@ function Login({ onLoginSuccess }) {
           className="w-full h-full object-cover"
           src={backgroundVideo}
         />
-        {/* Overlay warna biru transparan */}
-        <div className="absolute inset-0 bg-blue-900/40"></div>
+        <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
-      {/* Login Form */}
-      <div className="relative z-10 w-full max-w-xl mx-4">
-        <div className="bg-white/10 backdrop-blur-md rounded-3xl p-12 border border-white/20 shadow-2xl">
+      {/* LoginForm */}
+      <div className="relative z-10 w-full max-w-xl mx-4 animate-[fadeInUp_0.6s_ease-out]">
+        <div className="bg-white/10 backdrop-blur-md rounded-3xl p-12 border border-white/30 shadow-[0_0_30px_rgba(0,0,0,0.3)]">
+          {/* Logo */}
+          <div className="flex justify-center mb-6">
+            <img src={logoptpn4} alt="Logo PTPN" className="h-20 w-auto" />
+          </div>
+
           <form onSubmit={handleLogin} className="space-y-8">
             {/* Username Input */}
             <div>
@@ -62,8 +73,13 @@ function Login({ onLoginSuccess }) {
                   type="text"
                   placeholder="Username"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-white/20 border border-white/30 rounded-xl px-14 py-4 text-white text-lg placeholder-white/60 focus:outline-none focus:border-white/50 focus:bg-white/25 transition"
+                  onChange={(e) => setUsername(e.target.value)} // Ini sudah benar
+                  className="w-full bg-white/20 border border-white/30 rounded-xl px-14 py-4 
+                             text-white text-lg placeholder-white/80 
+                             focus:outline-none focus:border-white/60 focus:bg-white/25 
+                             focus:shadow-[0_0_15px_rgba(255,255,255,0.3)]
+                             hover:shadow-[0_0_10px_rgba(255,255,255,0.2)]
+                             transition-all duration-300"
                 />
               </div>
             </div>
@@ -90,8 +106,16 @@ function Login({ onLoginSuccess }) {
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   value={password}
+                  // ==================================
+                  // INI DIA PERBAIKANNYA! (e.target.value)
+                  // ==================================
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white/20 border border-white/30 rounded-xl px-14 py-4 text-white text-lg placeholder-white/60 focus:outline-none focus:border-white/50 focus:bg-white/25 transition"
+                  className="w-full bg-white/20 border border-white/30 rounded-xl px-14 py-4 
+                             text-white text-lg placeholder-white/80 
+                             focus:outline-none focus:border-white/60 focus:bg-white/25 
+                             focus:shadow-[0_0_15px_rgba(255,255,255,0.3)]
+                             hover:shadow-[0_0_10px_rgba(255,255,255,0.2)]
+                             transition-all duration-300"
                 />
                 <button
                   type="button"
@@ -99,20 +123,6 @@ function Login({ onLoginSuccess }) {
                   className="absolute right-5 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition"
                 >
                   {showPassword ? (
-                    <svg
-                      className="w-6 h-6"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
-                      />
-                    </svg>
-                  ) : (
                     <svg
                       className="w-6 h-6"
                       fill="none"
@@ -132,6 +142,20 @@ function Login({ onLoginSuccess }) {
                         d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
                       />
                     </svg>
+                  ) : (
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"
+                      />
+                    </svg>
                   )}
                 </button>
               </div>
@@ -140,18 +164,19 @@ function Login({ onLoginSuccess }) {
             {/* Login Button */}
             <button
               type="submit"
-              className="w-full bg-white text-blue-600 font-bold text-lg py-4 rounded-xl hover:bg-blue-50 transition shadow-lg"
+              className="w-full bg-gradient-to-r from-pink-500 to-pink-300 
+                         text-white font-semibold text-lg py-4 rounded-xl 
+                         transition-all duration-300 shadow-lg 
+                         hover:from-pink-400 hover:to-pink-300 hover:scale-105"
             >
               Login
             </button>
-          </form>
 
-          {/* Logo - pakai import */}
-          <div className="flex items-center justify-center gap-6 mt-10">
-            <img src={logo1} alt="Logo 1" className="h-10 w-auto" />
-            <img src={logo2} alt="Logo 2" className="h-10 w-auto" />
-            <img src={logo3} alt="Logo 3" className="h-12 w-auto" />
-          </div>
+            {/* Forgot Password */}
+            <p className="text-center text-white/70 text-sm mt-4 hover:underline cursor-pointer">
+              Forgot Password?
+            </p>
+          </form>
         </div>
       </div>
     </div>
