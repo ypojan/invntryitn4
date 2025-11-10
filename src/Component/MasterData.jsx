@@ -1,8 +1,11 @@
 // src/Component/MasterData.jsx
 
+// 1. Tambahkan import useState, Modal, dan FormTambahBarang
 import React, { useState } from "react";
+import Modal from "./common/Modal"; // Pastikan path ini benar
+import FormTambahBarang from "./FormTambahBarang"; // Pastikan path ini benar
 
-// 1. IMPORT GAMBAR ASET LOKAL KAMU
+// IMPORT GAMBAR ASET LOKAL KAMU
 import laptopImg from "../assets/laptop.png";
 import pcImg from "../assets/pc.png";
 import sparepartImg from "../assets/sparepart.png";
@@ -11,6 +14,10 @@ import proyektorImg from "../assets/proyektor.png";
 
 function MasterData() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [openMenuIndex, setOpenMenuIndex] = useState(null);
+
+  // 2. Buat state untuk mengontrol modal
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const inventoryItems = [
     {
@@ -49,6 +56,10 @@ function MasterData() {
   const filteredItems = inventoryItems.filter((item) =>
     item.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const handleMenuToggle = (index) => {
+    setOpenMenuIndex(openMenuIndex === index ? null : index);
+  };
 
   return (
     <>
@@ -92,14 +103,20 @@ function MasterData() {
           </div>
         </div>
 
-        {/* Tambah Data Button - GRADASI BIRU */}
+        {/* 3. Modifikasi Tombol Tambah Data */}
         <button
+          onClick={() => setIsModalOpen(true)} // <-- UBAH DI SINI
           className="px-6 py-3 rounded-lg flex items-center gap-2 transition-all duration-300 shadow-lg ml-auto
                      bg-gradient-to-r from-blue-600 to-blue-700 text-white
-                     hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105"
+                     hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105
+                     relative overflow-hidden group"
         >
+          {/* Shimmer Effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+
+          {/* Konten Tombol (Ikon + Teks) */}
           <svg
-            className="w-5 h-5"
+            className="w-5 h-5 relative z-10"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -111,12 +128,12 @@ function MasterData() {
               d="M12 4v16m8-8H4"
             />
           </svg>
-          <span className="font-semibold">Tambah Data</span>
+          <span className="font-semibold relative z-10">Tambah Data</span>
         </button>
       </div>
 
       {/* ================================================================
-        BAGIAN KARTU (CARD) - DESAIN BARU LEBIH DINAMIS
+        BAGIAN KARTU (CARD)
         ================================================================
       */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -126,9 +143,73 @@ function MasterData() {
             className="bg-white rounded-xl shadow-lg overflow-hidden 
                        border border-gray-100
                        hover:shadow-2xl hover:-translate-y-2 
-                       transition-all duration-300 group"
+                       transition-all duration-300 group
+                       relative"
           >
-            {/* Card Image Section - Gambar di kiri */}
+            {/* Tombol Titik Tiga */}
+            <button
+              onClick={() => handleMenuToggle(index)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 transition-colors z-10 p-1 rounded-full hover:bg-gray-100"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
+              </svg>
+            </button>
+
+            {/* Dropdown Menu */}
+            {openMenuIndex === index && (
+              <div
+                className="absolute top-12 right-4 w-44 bg-white rounded-lg shadow-xl border border-gray-200 z-20 overflow-hidden"
+                onMouseLeave={() => setOpenMenuIndex(null)} // Otomatis tutup
+              >
+                <button
+                  onClick={() => {
+                    alert("Edit: " + item.title);
+                    setOpenMenuIndex(null);
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors"
+                >
+                  <svg
+                    className="w-5 h-5 text-gray-500"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L16.732 3.732z"
+                    />
+                  </svg>
+                  <span>Edit Data</span>
+                </button>
+                <button
+                  onClick={() => {
+                    alert("Hapus: " + item.title);
+                    setOpenMenuIndex(null);
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                >
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                  <span>Hapus Data</span>
+                </button>
+              </div>
+            )}
+
+            {/* Card Content */}
             <div className="flex">
               <div className="w-2/5 p-4 bg-gradient-to-br from-gray-100 to-white flex items-center justify-center">
                 <img
@@ -142,7 +223,6 @@ function MasterData() {
                 />
               </div>
 
-              {/* Card Content Section - Teks di kanan */}
               <div className="w-3/5 p-5 flex flex-col justify-between">
                 <div>
                   <h3 className="text-xl font-bold text-gray-900 mb-1">
@@ -184,6 +264,26 @@ function MasterData() {
         AKHIR BAGIAN KARTU (CARD)
         ================================================================
       */}
+
+      {/* Tombol Lihat Lebih Banyak */}
+      <div className="flex justify-center mb-8">
+        <button className="flex items-center gap-2 text-gray-600 font-semibold hover:text-blue-600 transition-colors py-2 px-4 rounded-lg hover:bg-gray-100">
+          <span>Lihat Lebih Banyak</span>
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M19 9l-7 7-7-7"
+            />
+          </svg>
+        </button>
+      </div>
 
       {/* ================================================================
         BAGIAN CHART STATUS KONDISI BARANG (TIDAK DIUBAH)
@@ -325,6 +425,11 @@ function MasterData() {
           </div>
         </div>
       </div>
+
+      {/* 4. Tambahkan Komponen Modal di sini (di luar elemen utama) */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <FormTambahBarang onClose={() => setIsModalOpen(false)} />
+      </Modal>
     </>
   );
 }

@@ -1,9 +1,10 @@
 // src/Page/Login.jsx
 
-import backgroundVideo from "../assets/bgvidio.mp4";
+import backgroundImage from "../assets/background.jpg";
 import logoptpn4 from "../assets/logoptpn4.png";
 import { useState } from "react";
-import Swal from "sweetalert2";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState("");
@@ -14,37 +15,45 @@ function Login({ onLoginSuccess }) {
     e.preventDefault();
     console.log("Login clicked", { username, password });
 
-    Swal.fire({
-      title: "Berhasil!",
-      text: "Selamat datang kembali!",
-      icon: "success",
-      timer: 1500,
-      showConfirmButton: false,
-      background: "#fff",
-      color: "#333",
-    }).then(() => {
-      onLoginSuccess();
+    // Toast notification di pojok kanan bawah
+    toast.success("Berhasil Login! Selamat datang kembali!", {
+      position: "bottom-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: true,
+      draggable: true,
+      theme: "light",
     });
+
+    // Delay sedikit sebelum pindah halaman
+    setTimeout(() => {
+      onLoginSuccess();
+    }, 0);
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      {/* 🎥 Background Video */}
+      {/* 🎥 Background <img> */}
       <div className="absolute inset-0 z-0 overflow-hidden">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
+        <img
+          src={backgroundImage}
+          alt="Background"
           className="w-full h-full object-cover"
-          src={backgroundVideo}
         />
         <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
       {/* LoginForm */}
       <div className="relative z-10 w-full max-w-xl mx-4 animate-[fadeInUp_0.6s_ease-out]">
-        <div className="bg-white/10 backdrop-blur-md rounded-3xl p-12 border border-white/30 shadow-[0_0_30px_rgba(0,0,0,0.3)]">
+        
+        {/* EFEK HOVER (MEMBESAR) */}
+        <div 
+          className="bg-white/10 backdrop-blur-md rounded-3xl p-12 border border-white/30 shadow-[0_0_30px_rgba(0,0,0,0.3)]
+                     transition-all duration-300 ease-in-out
+                     hover:scale-105"
+        >
+          
           {/* Logo */}
           <div className="flex justify-center mb-6">
             <img src={logoptpn4} alt="Logo PTPN" className="h-20 w-auto" />
@@ -73,7 +82,7 @@ function Login({ onLoginSuccess }) {
                   type="text"
                   placeholder="Username"
                   value={username}
-                  onChange={(e) => setUsername(e.target.value)} // Ini sudah benar
+                  onChange={(e) => setUsername(e.target.value)}
                   className="w-full bg-white/20 border border-white/30 rounded-xl px-14 py-4 
                              text-white text-lg placeholder-white/80 
                              focus:outline-none focus:border-white/60 focus:bg-white/25 
@@ -106,9 +115,6 @@ function Login({ onLoginSuccess }) {
                   type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   value={password}
-                  // ==================================
-                  // INI DIA PERBAIKANNYA! (e.target.value)
-                  // ==================================
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full bg-white/20 border border-white/30 rounded-xl px-14 py-4 
                              text-white text-lg placeholder-white/80 
@@ -164,16 +170,24 @@ function Login({ onLoginSuccess }) {
             {/* Login Button */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-pink-500 to-pink-300 
-                         text-white font-semibold text-lg py-4 rounded-xl 
-                         transition-all duration-300 shadow-lg 
-                         hover:from-pink-400 hover:to-pink-300 hover:scale-105"
+              className="w-full bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 
+                         text-white font-bold text-lg py-4 rounded-xl 
+                         transition-all duration-300 
+                         shadow-lg shadow-blue-500/50
+                         hover:shadow-2xl hover:shadow-blue-600/60
+                         hover:scale-105 active:scale-95
+                         border border-blue-400/30
+                         relative overflow-hidden group"
             >
-              Login
+              {/* Shimmer Effect */}
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+              
+              {/* Text */}
+              <span className="relative z-10">Login</span>
             </button>
 
             {/* Forgot Password */}
-            <p className="text-center text-white/70 text-sm mt-4 hover:underline cursor-pointer">
+            <p className="text-center text-white/70 text-sm mt-4 hover:text-white hover:underline cursor-pointer transition-colors duration-300">
               Forgot Password?
             </p>
           </form>

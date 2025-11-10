@@ -1,9 +1,6 @@
-// src/Component/common/Sidebar.jsx
 
 import React, { useContext } from "react";
 import { AppContext } from "../../Context/AppContext.jsx";
-
-// 1. IMPORT LOGO BARUMU (HANYA SATU FILE)
 import logoptpn4 from "../../assets/logoptpn4.png";
 
 function Sidebar() {

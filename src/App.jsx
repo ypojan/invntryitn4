@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import Login from "./Page/Login.jsx";
 import Dashboard from "./Page/Dashboard.jsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -15,7 +17,10 @@ function App() {
 
   return (
     <>
-      {/* 5. Logika si Satpam! */}
+      {/* Toast Container - Wajib ada untuk menampilkan notifikasi */}
+      <ToastContainer />
+
+      {/* Logika si Satpam! */}
       {isAuthenticated ? (
         // JIKA SUDAH LOGIN: "Makan" <Dashboard />
         <Dashboard onLogout={handleLogout} />
