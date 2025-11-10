@@ -9,8 +9,8 @@ import MasterData from "../Component/MasterData.jsx";
 
 // (Nanti kalau file-file ini sudah kamu buat, kamu tinggal import di sini)
 // import History from "../Component/History.jsx";
-// import Peminjaman from "../Component/Peminjaman.jsx";
-// import Pengembalian from "../Component/Pengembalian.jsx";
+import Peminjaman from "../Component/Peminjaman.jsx";
+import Pengembalian from "../Component/Pengembalian.jsx";
 // import InputSpesifikasi from "../Component/InputSpesifikasi.jsx";
 
 export default function Route() {
@@ -31,11 +31,11 @@ export default function Route() {
 
     case "peminjaman":
       // return <Peminjaman />;
-      return <div>Halaman Peminjaman (Coming Soon)</div>;
+      return <Peminjaman />;
 
     case "pengembalian":
       // return <Pengembalian />;
-      return <div>Halaman Pengembalian (Coming Soon)</div>;
+      return <Pengembalian />;
 
     case "history":
       // return <History />;
