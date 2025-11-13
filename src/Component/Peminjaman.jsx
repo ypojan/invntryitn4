@@ -1,5 +1,23 @@
-import React, { useState } from "react";
+// src/Component/Peminjaman.jsx
 
+// (useState sudah di-import, jadi tidak ada perubahan di sini)
+import React, { useState, useContext } from "react"; 
+import { AppContext } from "../Context/AppContext"; 
+
+import { 
+  IoSearchOutline, 
+  IoCalendarOutline, 
+  IoPrintOutline, 
+  IoAdd, 
+  IoPencil, 
+  IoTrashOutline, 
+  IoArrowBack,
+  IoChevronBack,
+  IoChevronForward
+} from "react-icons/io5";
+
+import Modal from "./common/Modal"; 
+import FormPeminjaman from "./FormPeminjaman.jsx"; 
 
 const initialData = [
   {
@@ -19,58 +37,21 @@ const initialData = [
 ];
 
 
-function IconSearch() {
-  return (
-    <svg className="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path d="M10.5 3a7.5 7.5 0 105.303 12.803l4.197 4.197a1 1 0 001.414-1.414l-4.197-4.197A7.5 7.5 0 0010.5 3zm0 2a5.5 5.5 0 110 11 5.5 5.5 0 010-11z" />
-    </svg>
-  );
-}
-function IconCalendar() {
-  return (
-    <svg className="w-4 h-4 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <rect x="3" y="5" width="18" height="16" rx="2" ry="2" strokeWidth="1.5"></rect>
-      <path d="M16 3v4M8 3v4M3 11h18" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"></path>
-    </svg>
-  );
-}
-function IconPrint() {
-  return (
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M6 9V2h12v7M6 18h12v-7H6v7zM6 14H4a2 2 0 01-2-2V7a2 2 0 012-2h2" />
-    </svg>
-  );
-}
-function IconPlus() {
-  return (
-    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M12 5v14M5 12h14" />
-    </svg>
-  );
-}
-function IconEdit() {
-  return (
-    <svg className="w-4 h-4 text-sky-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M4 20l6-1 9-9-5-5-9 9L4 20z" />
-    </svg>
-  );
-}
-function IconDelete() {
-  return (
-    <svg className="w-4 h-4 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-      <path strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M8 6v12a2 2 0 002 2h4a2 2 0 002-2V6M10 11v6M14 11v6M9 6V4a1 1 0 011-1h4a1 1 0 011 1v2" />
-    </svg>
-  );
-}
-
 export default function Peminjaman() {
   const [data, setData] = useState(initialData);
   const [query, setQuery] = useState("");
   const [date, setDate] = useState("");
 
+  // 1. TAMBAHKAN STATE BARU INI
+  // State ini akan melacak apakah input tanggal kita sedang mode 'text' (untuk placeholder)
+  // atau mode 'date' (saat diklik)
+  const [dateInputType, setDateInputType] = useState("text");
 
-  const fixedWidth = "w-40";
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { setRoute } = useContext(AppContext);
+
+  // ... (semua fungsi-fungsi helper-mu tetap di sini) ...
   const filtered = data.filter((r) => {
     const q = query.trim().toLowerCase();
     if (!q && !date) return true;
@@ -101,11 +82,9 @@ export default function Peminjaman() {
   function handleViewTandaTerima(row) {
     alert(`Lihat tanda terima untuk ${row.id}`);
   }
-
   function submitSearch() {
     document.getElementById("search-input")?.blur();
   }
-
   function focusDatePicker() {
     const el = document.getElementById("date-input");
     if (!el) return;
@@ -113,152 +92,203 @@ export default function Peminjaman() {
     else el.focus();
   }
 
+
   return (
-    <div className="min-h-screen bg-slate-100 p-8">
-      <div className="max-w-7xl mx-auto">
-        <header className="mb-6">
-          <h1 className="text-4xl font-bold text-black py-2">
+    <>
+      <header className="mb-6 flex items-center gap-4">
+        {/* ... (kode header tetap sama) ... */}
+        <button 
+          onClick={() => setRoute("dashboard")} 
+          className="p-2 rounded-full hover:bg-gray-200 transition-colors"
+          title="Kembali ke Dashboard"
+        >
+          <IoArrowBack className="w-6 h-6 text-gray-700" />
+        </button>
+        <h1 className="text-3xl font-bold text-gray-900 py-2">
           Peminjaman Barang
         </h1>
-        </header>
+      </header>
 
-        <section>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
+      <section>
+        {/* Filter & Action Bar */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+          
+          {/* Filter (Kiri) */}
+          <div className="flex items-center gap-3 w-full md:w-auto">
             
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <input
-                  id="date-input"
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  className="appearance-none px-3 py-2 rounded-lg border border-slate-200 bg-white text-sm pr-10"
-                  title="Pilih Tanggal"
-                />
-                <button
-                  type="button"
-                  onClick={focusDatePicker}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded hover:bg-slate-100"
-                  aria-label="Pilih Tanggal"
-                  title="Pilih Tanggal"
-                >
-                  <IconCalendar />
-                </button>
-              </div>
-
-              
+            {/* --- 2. MODIFIKASI BLOK INPUT TANGGAL INI --- */}
+            <div className="relative">
+              <input
+                id="date-input"
+                type={dateInputType} // Gunakan state untuk 'type'
+                value={date}
+                onChange={(e) => setDate(e.target.value)}
+                placeholder="dd/mm/yyyy" // Tambahkan placeholder di sini
+                
+                // Saat di-klik, ubah type jadi 'date'
+                onFocus={() => setDateInputType("date")} 
+                
+                // Saat fokus hilang, cek apakah ada isinya
+                onBlur={() => {
+                  // Jika 'date' (dari state) kosong, kembalikan ke type "text"
+                  // agar placeholder-nya muncul lagi
+                  if (!date) {
+                    setDateInputType("text");
+                  }
+                }}
+                
+                className="w-48 appearance-none px-3 py-2 rounded-lg border border-gray-300 bg-white text-sm pr-10
+                           focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                type="button"
+                onClick={focusDatePicker}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded hover:bg-gray-100"
+                aria-label="Pilih Tanggal"
+              >
+                <IoCalendarOutline className="w-4 h-4 text-gray-500" />
+              </button>
             </div>
+            {/* --- BATAS MODIFIKASI --- */}
 
-            
-            <div className="flex flex-col md:items-end gap-3">
-             
-              <div className={`${fixedWidth}`}>
-                <div className="relative">
-                  <input
-                    id="search-input"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Cari Spesifikasi"
-                    className={`w-full pr-9 pl-3 py-2 rounded-lg border border-slate-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-200`}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") submitSearch();
-                    }}
-                    aria-label="Cari Spesifikasi"
-                  />
-                  <button
-                    onClick={submitSearch}
-                    className="absolute right-1 top-1/2 -translate-y-1/2 p-1.5 rounded-md hover:bg-slate-100 z-20"
-                    aria-label="Cari"
-                    title="Cari"
-                    type="button"
-                  >
-                    <IconSearch />
-                  </button>
-                </div>
-              </div>
-
-              
-              <div className="flex gap-3">
-                <button
-                  className={`${fixedWidth} px-0 py-2 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 shadow-sm bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 text-sm`}
-                  onClick={() => alert("Cetak laporan (placeholder)")}
-                  type="button"
-                >
-                  <IconPrint /> <span className="font-medium text-sm">Cetak Laporan</span>
-                              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-
-                </button>
-
-                <button
-                  className={`${fixedWidth} px-0 py-2 rounded-lg flex items-center justify-center gap-2 transition-all duration-200 shadow-sm bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 text-sm`}
-                  onClick={() => alert("Tambah Peminjaman (placeholder)")}
-                  type="button"
-                >
-                  <IconPlus /> <span className="font-medium text-sm hidden md:inline">Peminjaman Barang</span>
-                </button>
-              </div>
+            <div className="relative flex-1 md:flex-none">
+              {/* ... (kode input search tetap sama) ... */}
+              <input
+                id="search-input"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="Cari Spesifikasi..."
+                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 bg-white text-sm
+                           focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") submitSearch();
+                }}
+                aria-label="Cari Spesifikasi"
+              />
+              <button
+                onClick={submitSearch}
+                className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-md text-gray-400"
+                aria-label="Cari"
+                type="button"
+              >
+                <IoSearchOutline className="w-5 h-5" />
+              </button>
             </div>
           </div>
 
-          
-          <div className="mt-6 bg-white rounded shadow overflow-x-auto">
-            <table className="min-w-full">
-              <thead className="bg-slate-50 text-sm text-gray-700">
-                <tr>
-                  <th className="px-6 py-3 text-left">Tanggal Peminjaman</th>
-                  <th className="px-6 py-3 text-left">ID Barang</th>
-                  <th className="px-6 py-3 text-left">Spesifikasi</th>
-                  <th className="px-6 py-3 text-left">Jumlah Barang</th>
-                  <th className="px-6 py-3 text-left">Unit/Bagian</th>
-                  <th className="px-6 py-3 text-left">Surat Peminjaman</th>
-                  <th className="px-6 py-3 text-left">Tanda Terima</th>
-                  <th className="px-6 py-3 text-center">Aksi</th>
-                </tr>
-              </thead>
+          {/* Tombol Aksi (Kanan) */}
+          <div className="flex gap-3 w-full md:w-auto">
+            {/* ... (kode tombol-tombol aksi tetap sama) ... */}
+            <button
+              className="w-1/2 md:w-auto px-6 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 shadow-lg
+                         bg-gradient-to-r from-blue-600 to-blue-700 text-white
+                         hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105
+                         relative overflow-hidden group"
+              onClick={() => alert("Cetak laporan (placeholder)")}
+              type="button"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+              <IoPrintOutline className="w-5 h-5 relative z-10" /> 
+              <span className="font-semibold text-sm relative z-10">Cetak Laporan</span> 
+            </button>
+            
+            <button
+              className="w-1/2 md:w-auto px-6 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 shadow-lg
+                         bg-gradient-to-r from-blue-600 to-blue-700 text-white
+                         hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105
+                         relative overflow-hidden group" 
+              onClick={() => setIsModalOpen(true)} 
+              type="button"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+              <IoAdd className="w-5 h-5 relative z-10" /> 
+              <span className="font-semibold text-sm relative z-10">Peminjaman Barang</span>
+            </button>
+          </div>
+        </div>
 
-              <tbody className="text-sm text-gray-800 divide-y">
-                {filtered.length === 0 ? (
-                  <tr>
-                    <td colSpan="8" className="px-6 py-8 text-center text-gray-500">
-                      Tidak ada data
+        
+        {/* Tabel */}
+        <div className="bg-white rounded-lg shadow overflow-x-auto">
+          {/* ... (kode tabel tetap sama) ... */}
+          <table className="min-w-full">
+            <thead className="bg-slate-700 text-sm text-white uppercase">
+              <tr>
+                <th className="px-6 py-3 text-left font-semibold">Tanggal Peminjaman</th>
+                <th className="px-6 py-3 text-left font-semibold">ID Barang</th>
+                <th className="px-6 py-3 text-left font-semibold">Spesifikasi</th>
+                <th className="px-6 py-3 text-left font-semibold">Jumlah</th>
+                <th className="px-6 py-3 text-left font-semibold">Unit/Bagian</th>
+                <th className="px-6 py-3 text-left font-semibold">Surat Peminjaman</th>
+                <th className="px-6 py-3 text-left font-semibold">Tanda Terima</th>
+                <th className="px-6 py-3 text-center font-semibold">Aksi</th>
+              </tr>
+            </thead>
+            <tbody className="text-sm text-gray-800 divide-y divide-gray-200">
+              {filtered.length === 0 ? (
+                <tr>
+                  <td colSpan="8" className="px-6 py-8 text-center text-gray-500">
+                    Tidak ada data yang cocok dengan pencarian Anda.
+                  </td>
+                </tr>
+              ) : (
+                filtered.map((row) => (
+                  <tr key={row.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap">{row.tanggal}</td>
+                    <td className="px-6 py-4 whitespace-nowrap">{row.id}</td>
+                    <td className="px-6 py-4 max-w-xs truncate">{row.spesifikasi}</td>
+                    <td className="px-6 py-4">{row.jumlah}</td>
+                    <td className="px-6 py-4">{row.unit}</td>
+                    <td className="px-6 py-4">
+                      <button className="text-blue-600 hover:text-blue-800 font-medium text-sm" onClick={() => handleViewSurat(row)}>
+                        Lihat Detail
+                      </button>
+                    </td>
+                    <td className="px-6 py-4">
+                      <button className="text-blue-600 hover:text-blue-800 font-medium text-sm" onClick={() => handleViewTandaTerima(row)}>
+                        Lihat Detail
+                      </button>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <div className="inline-flex items-center gap-2">
+                        <button className="p-2 rounded-full text-blue-600 hover:bg-blue-100" onClick={() => handleEdit(row)} title="Edit">
+                          <IoPencil className="w-4 h-4" />
+                        </button>
+                        <button className="p-2 rounded-full text-red-600 hover:bg-red-100" onClick={() => handleDelete(row)} title="Hapus">
+                          <IoTrashOutline className="w-4 h-4" />
+                        </button>
+                      </div>
                     </td>
                   </tr>
-                ) : (
-                  filtered.map((row) => (
-                    <tr key={row.id}>
-                      <td className="px-6 py-4">{row.tanggal}</td>
-                      <td className="px-6 py-4">{row.id}</td>
-                      <td className="px-6 py-4">{row.spesifikasi}</td>
-                      <td className="px-6 py-4">{row.jumlah}</td>
-                      <td className="px-6 py-4">{row.unit}</td>
-                      <td className="px-6 py-4">
-                        <button className="text-sky-600 underline text-sm" onClick={() => handleViewSurat(row)}>
-                          Lihat Detail
-                        </button>
-                      </td>
-                      <td className="px-6 py-4">
-                        <button className="text-sky-600 underline text-sm" onClick={() => handleViewTandaTerima(row)}>
-                          Lihat Detail
-                        </button>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <div className="inline-flex items-center gap-2">
-                          <button className="p-2 rounded hover:bg-slate-100" onClick={() => handleEdit(row)} title="Edit">
-                            <IconEdit />
-                          </button>
-                          <button className="p-2 rounded hover:bg-slate-100" onClick={() => handleDelete(row)} title="Hapus">
-                            <IconDelete />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination Footer */}
+        <footer className="flex justify-end items-center mt-4">
+          {/* ... (kode pagination tetap sama) ... */}
+          <div className="flex items-center gap-2">
+            <button className="p-2 rounded-full hover:bg-gray-200 disabled:opacity-50" disabled>
+              <IoChevronBack className="w-5 h-5" />
+            </button>
+            <span className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold">
+              1
+            </span>
+            <button className="p-2 rounded-full hover:bg-gray-200 disabled:opacity-50" disabled>
+              <IoChevronForward className="w-5 h-5" />
+            </button>
           </div>
-        </section>
-      </div>
-    </div>
+        </footer>
+
+      </section>
+
+      {/* 3. UBAH `width` MODAL DI SINI (jika belum) */}
+      {/* Saya ubah jadi 600px agar pas dengan form-nya */}
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} width="612px">
+        <FormPeminjaman onClose={() => setIsModalOpen(false)} />
+      </Modal>
+    </>
   );
 }

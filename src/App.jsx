@@ -1,33 +1,71 @@
+// src/App.jsx
+
 import React, { useState } from "react";
+import LandingPage from "./Page/LandingPage.jsx";
 import Login from "./Page/Login.jsx";
 import Dashboard from "./Page/Dashboard.jsx";
+import Swal from "sweetalert2";
+
+// Import "WADAH" react-toastify (untuk notifikasi Login)
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // 'lobby' = Tampilan LandingPage
+  // 'login' = Tampilan Login
+  // 'dashboard' = Tampilan Dashboard (setelah login)
+  const [currentStage, setCurrentStage] = useState("lobby");
+
+  const handleSelectIT = () => {
+    setCurrentStage("login");
+  };
 
   const handleLoginSuccess = () => {
-    setIsAuthenticated(true);
+    setCurrentStage("dashboard");
   };
 
   const handleLogout = () => {
-    setIsAuthenticated(false);
+    // Notifikasi toast
+    Swal.fire({
+      toast: true,
+      position: "bottom-end",
+      icon: "success",
+      title: "Berhasil logout!",
+      showConfirmButton: false,
+      timer: 3000,
+      timerProgressBar: true,
+      didOpen: (toast) => {
+        toast.onmouseenter = Swal.stopTimer;
+        toast.onmouseleave = Swal.resumeTimer;
+      }
+    });
+
+    // KEMBALI KE TAHAP PALING AWAL ('lobby')
+    setCurrentStage("lobby");
+  };
+
+  // INI LOGIKA "SATPAM" KITA
+  const renderCurrentStage = () => {
+    switch (currentStage) {
+      case "login":
+        return <Login onLoginSuccess={handleLoginSuccess} />;
+      
+      case "dashboard":
+        return <Dashboard onLogout={handleLogout} />;
+      
+      case "lobby":
+      default:
+        return <LandingPage onSelectIT={handleSelectIT} />;
+    }
   };
 
   return (
     <>
-      {/* Toast Container - Wajib ada untuk menampilkan notifikasi */}
-      <ToastContainer />
+      {/* Panggung utama (Lobby/Login/Dashboard) */}
+      {renderCurrentStage()}
 
-      {/* Logika si Satpam! */}
-      {isAuthenticated ? (
-        // JIKA SUDAH LOGIN: "Makan" <Dashboard />
-        <Dashboard onLogout={handleLogout} />
-      ) : (
-        // JIKA BELUM LOGIN: "Makan" <Login />
-        <Login onLoginSuccess={handleLoginSuccess} />
-      )}
+      {/* "Wadah" Notifikasi Toast (hanya untuk Login) */}
+      <ToastContainer />
     </>
   );
 }

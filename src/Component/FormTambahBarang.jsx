@@ -1,8 +1,12 @@
 // src/Component/FormTambahBarang.jsx
 
 import React from "react";
+import { IoClose, IoCloudUploadOutline } from "react-icons/io5"; // Import ikon
 
+// Komponen ini menerima prop `onClose` agar tombol "Batal"
+// bisa memberi tahu `MasterData.jsx` untuk menutup modal
 function FormTambahBarang({ onClose }) {
+  
   const handleSimpan = (e) => {
     e.preventDefault();
     alert("Data Disimpan!");
@@ -18,21 +22,9 @@ function FormTambahBarang({ onClose }) {
         <button
           type="button"
           onClick={onClose} // Tombol close merah
-          className="text-gray-400 hover:text-gray-600 bg-red-100 hover:bg-red-200 rounded-full p-1"
+          className="text-gray-400 hover:text-red-600 bg-red-100 hover:bg-red-200 rounded-full p-1 transition-colors"
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <IoClose className="w-6 h-6" />
         </button>
       </div>
 
@@ -50,63 +42,21 @@ function FormTambahBarang({ onClose }) {
         />
       </div>
 
-      {/* ================================================================
-          PERUBAHAN BAGIAN UPLOAD GAMBAR (DESAIN SIMPEL)
-          ================================================================
-      */}
+      {/* Upload Gambar */}
       <div className="mb-8">
-        {/* Label "Upload Gambar" */}
         <label className="block text-sm font-medium text-gray-700 mb-2">
           <span className="text-red-500">*</span> Upload Gambar
         </label>
-
-        {/* Tombol "Upload Gambar" yang baru */}
-        {/* Kita gunakan <label> yang di-style seperti tombol.
-          'htmlFor' menyambungkannya ke <input type="file"> di bawah.
-          Saat label ini diklik, otomatis input file akan terbuka.
-        */}
-        <label
-          htmlFor="file-upload"
-          className="inline-flex items-center gap-2 px-4 py-2 
-                     bg-white border border-gray-300 rounded-lg 
-                     text-sm font-medium text-gray-700 
-                     cursor-pointer hover:bg-gray-50"
-        >
-          {/* Ikon Upload (sesuai gambar) */}
-          <svg
-            className="w-5 h-5 text-gray-500"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"
-            />
-          </svg>
-          <span>Upload Gambar</span>
-        </label>
-
-        {/* Input file yang asli, kita sembunyikan */}
-        <input
-          id="file-upload"
-          name="file-upload"
-          type="file"
-          className="hidden"
-          // Nanti bisa tambahkan onChange handler di sini
-        />
-
-        {/* Teks format */}
-        <p className="text-xs text-gray-500 mt-2">
-          Format: JPG, PNG, maksimal 2MB
-        </p>
+        <div className="w-full flex justify-center items-center px-6 py-10
+                      rounded-lg bg-blue-50 border-2 border-dashed border-blue-200
+                      text-blue-500 hover:bg-blue-100 cursor-pointer">
+          <div className="text-center">
+            <IoCloudUploadOutline className="w-10 h-10 mx-auto" />
+            <p className="mt-2 font-semibold">Upload Gambar</p>
+            <p className="text-xs text-gray-500 mt-1">Format: JPG, PNG, maksimal 2MB</p>
+          </div>
+        </div>
       </div>
-      {/* ================================================================
-          AKHIR PERUBAHAN
-          ================================================================
-      */}
 
       {/* Tombol Batal & Simpan */}
       <div className="flex justify-end gap-4">

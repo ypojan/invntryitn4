@@ -427,7 +427,7 @@ function MasterData() {
       </div>
 
       {/* 4. Tambahkan Komponen Modal di sini (di luar elemen utama) */}
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} width="500px">
         <FormTambahBarang onClose={() => setIsModalOpen(false)} />
       </Modal>
     </>
