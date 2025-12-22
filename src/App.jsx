@@ -1,31 +1,28 @@
-// src/App.jsx
-
-import React, { useState } from "react";
+import React, { useContext, useEffect } from "react"; // Hapus useState
+import { AppContext } from "./Context/AppContext.jsx"; 
 import LandingPage from "./Page/LandingPage.jsx";
-import Login from "./Page/Login.jsx";
+import Login from "./Page/Login.jsx"; // (Opsional, jika nanti butuh)
 import Dashboard from "./Page/Dashboard.jsx";
 import Swal from "sweetalert2";
-
-// Import "WADAH" react-toastify (untuk notifikasi Login)
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+// Import Modal Global
+import Modal from "./Component/common/Modal.jsx";
+import FormTambahBarang from "./Component/FormTambahBarang.jsx";
+import FormPeminjaman from "./Component/FormPeminjaman.jsx";
+
 function App() {
-  // 'lobby' = Tampilan LandingPage
-  // 'login' = Tampilan Login
-  // 'dashboard' = Tampilan Dashboard (setelah login)
-  const [currentStage, setCurrentStage] = useState("lobby");
+  // Kita tidak lagi pakai 'useState' lokal untuk stage.
+  // Kita ambil 'route' langsung dari Context (yang sinkron dengan URL).
+  const { route, setRoute, modal, closeModal } = useContext(AppContext);
 
+  // Fungsi saat tombol "Inventory IT" diklik di Landing Page
   const handleSelectIT = () => {
-    setCurrentStage("login");
-  };
-
-  const handleLoginSuccess = () => {
-    setCurrentStage("dashboard");
+    setRoute("dashboard"); // Ini akan mengubah URL jadi /#dashboard
   };
 
   const handleLogout = () => {
-    // Notifikasi toast
     Swal.fire({
       toast: true,
       position: "bottom-end",
@@ -39,33 +36,43 @@ function App() {
         toast.onmouseleave = Swal.resumeTimer;
       }
     });
-
-    // KEMBALI KE TAHAP PALING AWAL ('lobby')
-    setCurrentStage("lobby");
+    // Saat logout, kembalikan ke Lobi
+    setRoute("lobby");
   };
 
-  // INI LOGIKA "SATPAM" KITA
-  const renderCurrentStage = () => {
-    switch (currentStage) {
-      case "login":
-        return <Login onLoginSuccess={handleLoginSuccess} />;
-      
-      case "dashboard":
-        return <Dashboard onLogout={handleLogout} />;
-      
-      case "lobby":
-      default:
-        return <LandingPage onSelectIT={handleSelectIT} />;
+  // Logika Render Utama
+  // Cek isi variabel 'route' (dari URL)
+  const renderContent = () => {
+    if (route === "lobby") {
+      return <LandingPage onSelectIT={handleSelectIT} />;
+    } 
+    // Jika route adalah 'login', tampilkan Login (opsional)
+    else if (route === "login") {
+       return <Login onLoginSuccess={() => setRoute("dashboard")} />;
+    }
+    // Untuk semua route lain (dashboard, peminjaman, history, dll),
+    // Kita tampilkan DASHBOARD sebagai kerangkanya.
+    // Nanti 'Route.jsx' di dalam Dashboard yang akan menangani detail isinya.
+    else {
+      return <Dashboard onLogout={handleLogout} />;
     }
   };
 
   return (
     <>
-      {/* Panggung utama (Lobby/Login/Dashboard) */}
-      {renderCurrentStage()}
+      {renderContent()}
 
-      {/* "Wadah" Notifikasi Toast (hanya untuk Login) */}
+      {/* Wadah Notifikasi */}
       <ToastContainer />
+      
+      {/* --- MODAL GLOBAL --- */}
+      <Modal isOpen={modal.tambahBarang} onClose={closeModal}>
+        <FormTambahBarang onClose={closeModal} />
+      </Modal>
+
+      <Modal isOpen={modal.peminjaman} onClose={closeModal}>
+        <FormPeminjaman onClose={closeModal} />
+      </Modal>
     </>
   );
 }

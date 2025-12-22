@@ -1,8 +1,19 @@
+import React from 'react';
+import logoptpn4 from "../../assets/logoptpn4.png";
+
 function Header() {
   return (
     <div className="bg-[#d3e1ee] border-b border-gray-200 px-8 py-4">
-      <div className="flex items-center justify-end">
-        {/* User Profile Only */}
+      <div className="flex items-center justify-between">
+
+        <div className="flex items-center">
+            <img 
+              src={logoptpn4} 
+              alt="Logo PTPN IV" 
+              className="h-12 w-auto" 
+            />
+        </div>
+
         <div className="flex items-center gap-3">
           <div className="text-right">
             <div className="text-sm font-medium text-gray-700">Senku</div>

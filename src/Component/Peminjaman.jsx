@@ -176,9 +176,8 @@ export default function Peminjaman() {
             </div>
           </div>
 
-          {/* Tombol Aksi (Kanan) */}
+
           <div className="flex gap-3 w-full md:w-auto">
-            {/* ... (kode tombol-tombol aksi tetap sama) ... */}
             <button
               className="w-1/2 md:w-auto px-6 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 shadow-lg
                          bg-gradient-to-r from-blue-600 to-blue-700 text-white
@@ -284,8 +283,6 @@ export default function Peminjaman() {
 
       </section>
 
-      {/* 3. UBAH `width` MODAL DI SINI (jika belum) */}
-      {/* Saya ubah jadi 600px agar pas dengan form-nya */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} width="612px">
         <FormPeminjaman onClose={() => setIsModalOpen(false)} />
       </Modal>
