@@ -1,3 +1,5 @@
+// src/Context/AppContext.jsx
+
 import React, { createContext, useEffect, useState } from "react";
 
 // Import gambar default
@@ -11,196 +13,69 @@ import tvImg from "../assets/tv.png";
 
 const ApplicationContext = createContext();
 
-/* =============================
-   MASTER INVENTORY DEFAULT
-============================= */
-const DEFAULT_INVENTORY = [
-  { id: 1, title: "Laptop", total: 35, image: laptopImg },
-  { id: 2, title: "Komputer", total: 35, image: pcImg },
-  { id: 3, title: "Sparepart", total: 35, image: sparepartImg },
-  { id: 4, title: "Mesin Printer", total: 35, image: printerImg },
-  { id: 5, title: "Projector", total: 35, image: proyektorImg },
-  { id: 6, title: "AC", total: 35, image: acImg },
-  { id: 7, title: "TV", total: 35, image: tvImg },
+/* =================================================================
+   1. DATA MASTER KATEGORI
+================================================================= */
+const MASTER_CATEGORIES = [
+  { id: 1, title: "Laptop", image: laptopImg },
+  { id: 2, title: "Komputer", image: pcImg },
+  { id: 3, title: "Sparepart", image: sparepartImg },
+  { id: 4, title: "Mesin Printer", image: printerImg },
+  { id: 5, title: "Projector", image: proyektorImg },
+  { id: 6, title: "AC", image: acImg },
+  { id: 7, title: "TV", image: tvImg },
 ];
 
-/* =============================
-   DETAIL BARANG (SUMBER DATA)
-============================= */
-const detailBarangData = [
-  // ===== LAPTOP (35) =====
-  {
-    id: "L-001",
-    kategori: "Laptop",
-    tanggal: "01/01/2025",
-    spesifikasi: "Lenovo ThinkPad X1",
-    gambar: laptopImg,
-    jumlah: 15,
-    hargaSatuan: 18000000,
-    totalHarga: 270000000,
-    kondisi: { bagus: 12, diperbaiki: 2, rusak: 1 },
-  },
-  {
-    id: "L-002",
-    kategori: "Laptop",
-    tanggal: "02/01/2025",
-    spesifikasi: "HP Elitebook",
-    gambar: laptopImg,
-    jumlah: 20,
-    hargaSatuan: 16000000,
-    totalHarga: 320000000,
-    kondisi: { bagus: 18, diperbaiki: 1, rusak: 1 },
-  },
+/* =================================================================
+   2. DAFTAR MEREK & TIPE ASLI (REAL MODELS)
+================================================================= */
+const REAL_MODELS = {
+  "Laptop": ["MSI Stealth A16", "Lenovo Yoga 9i", "MacBook Pro M2", "Asus ROG Zephyrus", "Dell XPS 15"],
+  "Komputer": ["PC Rakitan i9", "iMac 24 Inch", "Dell OptiPlex", "HP Pavilion", "Lenovo Legion"],
+  "Sparepart": ["SSD Samsung 1TB", "RAM Corsair 32GB", "VGA RTX 4060", "Motherboard ASUS", "PSU Seasonic"],
+  "Mesin Printer": ["Epson L3210", "HP LaserJet Pro", "Canon Pixma", "Brother DCP", "Fuji Xerox"],
+  "Projector": ["Epson EB-X500", "BenQ MW560", "Sony VPL", "Panasonic PT", "ViewSonic"],
+  "AC": ["Daikin 2PK", "Panasonic 1PK", "Sharp 1.5PK", "Gree 1.5PK", "LG Dual Cool"],
+  "TV": ["Samsung 50 Inch", "LG OLED 55", "Sony Bravia 65", "TCL 43 Inch", "Xiaomi TV 32"]
+};
 
-  // ===== KOMPUTER (35) =====
-  {
-    id: "K-001",
-    kategori: "Komputer",
-    tanggal: "03/01/2025",
-    spesifikasi: "PC Office",
-    gambar: pcImg,
-    jumlah: 20,
-    hargaSatuan: 8500000,
-    totalHarga: 170000000,
-    kondisi: { bagus: 18, diperbaiki: 1, rusak: 1 },
-  },
-  {
-    id: "K-002",
-    kategori: "Komputer",
-    tanggal: "04/01/2025",
-    spesifikasi: "PC Design",
-    gambar: pcImg,
-    jumlah: 15,
-    hargaSatuan: 12000000,
-    totalHarga: 180000000,
-    kondisi: { bagus: 13, diperbaiki: 1, rusak: 1 },
-  },
+/* =================================================================
+   3. GENERATOR DATA DUMMY (VERSI RINGAN)
+   Dikurangi jadi 3 per kategori agar tidak Error QuotaExceeded
+================================================================= */
+const generateDummyDetailData = () => {
+  const allData = [];
+  
+  MASTER_CATEGORIES.forEach((cat) => {
+    const models = REAL_MODELS[cat.title] || ["Tipe Standar", "Tipe Pro"];
 
-  // ===== PRINTER (35) =====
-  {
-    id: "P-001",
-    kategori: "Mesin Printer",
-    tanggal: "05/01/2025",
-    spesifikasi: "HP LaserJet",
-    gambar: printerImg,
-    jumlah: 20,
-    hargaSatuan: 3500000,
-    totalHarga: 70000000,
-    kondisi: { bagus: 18, diperbaiki: 1, rusak: 1 },
-  },
-  {
-    id: "P-002",
-    kategori: "Mesin Printer",
-    tanggal: "06/01/2025",
-    spesifikasi: "Epson L-Series",
-    gambar: printerImg,
-    jumlah: 15,
-    hargaSatuan: 2800000,
-    totalHarga: 42000000,
-    kondisi: { bagus: 13, diperbaiki: 1, rusak: 1 },
-  },
+    // LOOP DIKURANGI JADI 3 (Supaya LocalStorage Muat)
+    for (let i = 0; i < 3; i++) {
+      const modelName = models[i % models.length];
 
-  // ===== PROJECTOR (35) =====
-  {
-    id: "PR-001",
-    kategori: "Projector",
-    tanggal: "07/01/2025",
-    spesifikasi: "Epson EB-X400",
-    gambar: proyektorImg,
-    jumlah: 20,
-    hargaSatuan: 7500000,
-    totalHarga: 150000000,
-    kondisi: { bagus: 18, diperbaiki: 1, rusak: 1 },
-  },
-  {
-    id: "PR-002",
-    kategori: "Projector",
-    tanggal: "08/01/2025",
-    spesifikasi: "BenQ MX550",
-    gambar: proyektorImg,
-    jumlah: 15,
-    hargaSatuan: 7000000,
-    totalHarga: 105000000,
-    kondisi: { bagus: 14, diperbaiki: 1, rusak: 0 },
-  },
+      allData.push({
+        id: `${cat.title.substring(0, 3).toUpperCase()}-${1000 + (i + 1)}`, 
+        kategori: cat.title, 
+        tanggal: `0${i + 1}/01/2025`,
+        spesifikasi: modelName, 
+        gambar: cat.image,
+        jumlah: 5, // Stok per item
+        hargaSatuan: 2000000 * (i + 1),
+        totalHarga: (2000000 * (i + 1)) * 5,
+        kondisi: { bagus: 3, diperbaiki: 1, rusak: 1 } 
+      });
+    }
+  });
+  
+  return allData;
+};
 
-  // ===== SPAREPART (35) =====
-  {
-    id: "SP-001",
-    kategori: "Sparepart",
-    tanggal: "09/01/2025",
-    spesifikasi: "RAM DDR4 8GB",
-    gambar: sparepartImg,
-    jumlah: 20,
-    hargaSatuan: 600000,
-    totalHarga: 12000000,
-    kondisi: { bagus: 18, diperbaiki: 1, rusak: 1 },
-  },
-  {
-    id: "SP-002",
-    kategori: "Sparepart",
-    tanggal: "10/01/2025",
-    spesifikasi: "SSD NVMe 512GB",
-    gambar: sparepartImg,
-    jumlah: 15,
-    hargaSatuan: 900000,
-    totalHarga: 13500000,
-    kondisi: { bagus: 14, diperbaiki: 1, rusak: 0 },
-  },
-
-  // ===== AC (35) =====
-  {
-    id: "AC-001",
-    kategori: "AC",
-    tanggal: "11/01/2025",
-    spesifikasi: "Daikin Inverter",
-    gambar: acImg,
-    jumlah: 20,
-    hargaSatuan: 4500000,
-    totalHarga: 90000000,
-    kondisi: { bagus: 18, diperbaiki: 1, rusak: 1 },
-  },
-  {
-    id: "AC-002",
-    kategori: "AC",
-    tanggal: "12/01/2025",
-    spesifikasi: "LG Dual Cool",
-    gambar: acImg,
-    jumlah: 15,
-    hargaSatuan: 4200000,
-    totalHarga: 63000000,
-    kondisi: { bagus: 14, diperbaiki: 1, rusak: 0 },
-  },
-
-  // ===== TV (35) =====
-  {
-    id: "TV-001",
-    kategori: "TV",
-    tanggal: "13/01/2025",
-    spesifikasi: "Samsung Smart TV",
-    gambar: tvImg,
-    jumlah: 20,
-    hargaSatuan: 5500000,
-    totalHarga: 110000000,
-    kondisi: { bagus: 18, diperbaiki: 1, rusak: 1 },
-  },
-  {
-    id: "TV-002",
-    kategori: "TV",
-    tanggal: "14/01/2025",
-    spesifikasi: "LG UHD TV",
-    gambar: tvImg,
-    jumlah: 15,
-    hargaSatuan: 5200000,
-    totalHarga: 78000000,
-    kondisi: { bagus: 14, diperbaiki: 1, rusak: 0 },
-  },
-];
+const initialDetailData = generateDummyDetailData();
 
 export default function AppContextProvider({ children }) {
-  /* ================= ROUTING ================= */
-  const getInitialRoute = () =>
-    window.location.hash.replace("#", "") || "lobby";
+  
+  /* --- ROUTING --- */
+  const getInitialRoute = () => window.location.hash.replace("#", "") || "lobby";
   const [route, setRouteInternal] = useState(getInitialRoute);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
@@ -212,46 +87,90 @@ export default function AppContextProvider({ children }) {
       : (window.location.hash = newRoute);
   };
 
-  /* ================= MODAL ================= */
+  useEffect(() => {
+    const handleHashChange = () => {
+      setRouteInternal(window.location.hash.replace("#", "") || "lobby");
+    };
+    window.addEventListener("hashchange", handleHashChange);
+    return () => window.removeEventListener("hashchange", handleHashChange);
+  }, []);
+
+  /* --- MODAL --- */
   const [modal, setModal] = useState({ tambahBarang: false });
-  const openModal = (name) =>
-    setModal((prev) => ({ ...prev, [name]: true }));
+  const openModal = (name) => setModal((prev) => ({ ...prev, [name]: true }));
   const closeModal = () => setModal({ tambahBarang: false });
 
-  /* ================= INVENTORY (LOCALSTORAGE) ================= */
+  /* --- INVENTORY STATE --- */
+  // GANTI KEY KE '_v3' AGAR DATA LAMA YANG PENUH DIHAPUS OTOMATIS
+  const STORAGE_KEY_ITEMS = "inventoryItems_v3";
+  const STORAGE_KEY_DETAILS = "detailBarangData_v3";
+
   const [inventoryItems, setInventoryItems] = useState(() => {
-    const saved = localStorage.getItem("inventoryItems");
-    return saved ? JSON.parse(saved) : DEFAULT_INVENTORY;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_ITEMS);
+      return saved ? JSON.parse(saved) : MASTER_CATEGORIES;
+    } catch (error) {
+      console.error("Gagal load storage:", error);
+      return MASTER_CATEGORIES;
+    }
   });
 
-  useEffect(() => {
-    localStorage.setItem(
-      "inventoryItems",
-      JSON.stringify(inventoryItems)
-    );
-  }, [inventoryItems]);
+  const [detailBarangData, setDetailBarangData] = useState(() => {
+     try {
+       const savedDetails = localStorage.getItem(STORAGE_KEY_DETAILS);
+       return savedDetails ? JSON.parse(savedDetails) : initialDetailData;
+     } catch (error) {
+       return initialDetailData;
+     }
+  });
 
-  const addInventoryItem = (item) => {
+  // PENGAMANAN PENYIMPANAN (TRY-CATCH)
+  useEffect(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY_ITEMS, JSON.stringify(inventoryItems));
+      localStorage.setItem(STORAGE_KEY_DETAILS, JSON.stringify(detailBarangData));
+    } catch (error) {
+      console.error("Penyimpanan Penuh! Tidak bisa menyimpan data baru.", error);
+      // Opsional: Alert ke user jika mau
+      if (error.name === 'QuotaExceededError') {
+        alert("Penyimpanan Browser Penuh. Data mungkin tidak tersimpan permanen.");
+      }
+    }
+  }, [inventoryItems, detailBarangData]);
+
+
+  /* --- LOGIKA TAMBAH BARANG --- */
+  const addInventoryItem = (newItem) => {
     setInventoryItems((prev) => [
       ...prev,
-      { ...item, id: Date.now(), total: 0 },
+      { ...newItem, id: Date.now() }, 
     ]);
+
+    const newDetail = {
+      id: `NEW-${Date.now()}`,
+      kategori: newItem.title,
+      tanggal: new Date().toLocaleDateString("id-ID"),
+      spesifikasi: `${newItem.title} (Baru)`,
+      gambar: newItem.image,
+      jumlah: 1, 
+      hargaSatuan: 0,
+      totalHarga: 0,
+      kondisi: { bagus: 1, diperbaiki: 0, rusak: 0 }
+    };
+    setDetailBarangData(prev => [...prev, newDetail]);
   };
 
-  /* ================= CONTEXT VALUE ================= */
+  /* --- LOGIKA HAPUS BARANG --- */
+  const deleteInventoryItem = (id, title) => {
+    setInventoryItems((prev) => prev.filter((item) => item.id !== id));
+    setDetailBarangData((prev) => prev.filter(item => item.kategori !== title));
+  };
+
   const contextValue = {
-    route,
-    setRoute,
-    selectedCategory,
-
-    inventoryItems,
-    addInventoryItem,
-
-    detailBarangData,
-
-    modal,
-    openModal,
-    closeModal,
+    route, setRoute, selectedCategory,
+    inventoryItems, addInventoryItem, deleteInventoryItem,
+    detailBarangData, 
+    modal, openModal, closeModal,
   };
 
   return (

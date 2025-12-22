@@ -1,8 +1,8 @@
 // src/Component/Peminjaman.jsx
 
-// (useState sudah di-import, jadi tidak ada perubahan di sini)
 import React, { useState, useContext } from "react"; 
 import { AppContext } from "../Context/AppContext"; 
+import Swal from "sweetalert2"; // Import SweetAlert2
 
 import { 
   IoSearchOutline, 
@@ -36,22 +36,15 @@ const initialData = [
   },
 ];
 
-
 export default function Peminjaman() {
   const [data, setData] = useState(initialData);
   const [query, setQuery] = useState("");
   const [date, setDate] = useState("");
-
-  // 1. TAMBAHKAN STATE BARU INI
-  // State ini akan melacak apakah input tanggal kita sedang mode 'text' (untuk placeholder)
-  // atau mode 'date' (saat diklik)
   const [dateInputType, setDateInputType] = useState("text");
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { setRoute } = useContext(AppContext);
 
-  // ... (semua fungsi-fungsi helper-mu tetap di sini) ...
   const filtered = data.filter((r) => {
     const q = query.trim().toLowerCase();
     if (!q && !date) return true;
@@ -70,18 +63,79 @@ export default function Peminjaman() {
   }
 
   function handleEdit(row) {
-    alert(`Edit: ${row.id}`);
+    Swal.fire({
+      title: "Info",
+      text: `Fitur edit untuk ${row.spesifikasi} akan segera hadir!`,
+      icon: "info",
+      confirmButtonText: "Oke",
+      buttonsStyling: false,
+      customClass: {
+        confirmButton: "bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+      }
+    });
   }
+
+  // --- PERBAIKAN FUNGSI DELETE ---
   function handleDelete(row) {
-    if (!confirm(`Hapus data ${row.id} ?`)) return;
-    setData((prev) => prev.filter((p) => p.id !== row.id));
+    Swal.fire({
+      title: "Yakin ingin menghapus?",
+      text: `Data peminjaman "${row.spesifikasi}" akan dihapus permanen.`,
+      icon: "warning",
+      showCancelButton: true,
+      
+      // Matikan styling bawaan SweetAlert biar tidak bentrok
+      buttonsStyling: false,
+      
+      // Pakai class Tailwind biar tombolnya cantik & terlihat jelas
+      customClass: {
+        popup: 'rounded-2xl p-6',
+        title: 'text-xl font-bold text-gray-800',
+        htmlContainer: 'text-gray-600',
+        // Tombol Konfirmasi (Kiri) - Biru
+        confirmButton: 'bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors mx-2',
+        // Tombol Batal (Kanan) - Merah
+        cancelButton: 'bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors mx-2'
+      },
+      
+      confirmButtonText: "Ya, Hapus",
+      cancelButtonText: "Batal",
+      reverseButtons: false // Pastikan ini false agar "Ya, Hapus" di Kiri
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setData((prev) => prev.filter((p) => p.id !== row.id));
+        Swal.fire({
+          title: "Terhapus!",
+          text: "Data berhasil dihapus.",
+          icon: "success",
+          buttonsStyling: false,
+          customClass: {
+            confirmButton: "bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+          }
+        });
+      }
+    });
   }
+
   function handleViewSurat(row) {
-    alert(`Lihat detail surat untuk ${row.id}\nSpesifikasi: ${row.spesifikasi}`);
+    Swal.fire({
+      title: "Surat Peminjaman",
+      text: `Detail surat untuk ID: ${row.id}`,
+      icon: "info",
+      buttonsStyling: false,
+      customClass: { confirmButton: "bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700" }
+    });
   }
+
   function handleViewTandaTerima(row) {
-    alert(`Lihat tanda terima untuk ${row.id}`);
+    Swal.fire({
+      title: "Tanda Terima",
+      text: `Bukti tanda terima untuk ID: ${row.id}`,
+      icon: "info",
+      buttonsStyling: false,
+      customClass: { confirmButton: "bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700" }
+    });
   }
+
   function submitSearch() {
     document.getElementById("search-input")?.blur();
   }
@@ -92,11 +146,9 @@ export default function Peminjaman() {
     else el.focus();
   }
 
-
   return (
     <>
       <header className="mb-6 flex items-center gap-4">
-        {/* ... (kode header tetap sama) ... */}
         <button 
           onClick={() => setRoute("dashboard")} 
           className="p-2 rounded-full hover:bg-gray-200 transition-colors"
@@ -110,80 +162,43 @@ export default function Peminjaman() {
       </header>
 
       <section>
-        {/* Filter & Action Bar */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-          
-          {/* Filter (Kiri) */}
           <div className="flex items-center gap-3 w-full md:w-auto">
-            
-            {/* --- 2. MODIFIKASI BLOK INPUT TANGGAL INI --- */}
             <div className="relative">
               <input
                 id="date-input"
-                type={dateInputType} // Gunakan state untuk 'type'
+                type={dateInputType}
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
-                placeholder="dd/mm/yyyy" // Tambahkan placeholder di sini
-                
-                // Saat di-klik, ubah type jadi 'date'
+                placeholder="dd/mm/yyyy"
                 onFocus={() => setDateInputType("date")} 
-                
-                // Saat fokus hilang, cek apakah ada isinya
-                onBlur={() => {
-                  // Jika 'date' (dari state) kosong, kembalikan ke type "text"
-                  // agar placeholder-nya muncul lagi
-                  if (!date) {
-                    setDateInputType("text");
-                  }
-                }}
-                
-                className="w-48 appearance-none px-3 py-2 rounded-lg border border-gray-300 bg-white text-sm pr-10
-                           focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onBlur={() => { if (!date) setDateInputType("text"); }}
+                className="w-48 appearance-none px-3 py-2 rounded-lg border border-gray-300 bg-white text-sm pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <button
-                type="button"
-                onClick={focusDatePicker}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded hover:bg-gray-100"
-                aria-label="Pilih Tanggal"
-              >
+              <button type="button" onClick={focusDatePicker} className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded hover:bg-gray-100">
                 <IoCalendarOutline className="w-4 h-4 text-gray-500" />
               </button>
             </div>
-            {/* --- BATAS MODIFIKASI --- */}
 
             <div className="relative flex-1 md:flex-none">
-              {/* ... (kode input search tetap sama) ... */}
               <input
                 id="search-input"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Cari Spesifikasi..."
-                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 bg-white text-sm
-                           focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") submitSearch();
-                }}
-                aria-label="Cari Spesifikasi"
+                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onKeyDown={(e) => { if (e.key === "Enter") submitSearch(); }}
               />
-              <button
-                onClick={submitSearch}
-                className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-md text-gray-400"
-                aria-label="Cari"
-                type="button"
-              >
+              <button onClick={submitSearch} className="absolute left-2 top-1/2 -translate-y-1/2 p-1.5 rounded-md text-gray-400" type="button">
                 <IoSearchOutline className="w-5 h-5" />
               </button>
             </div>
           </div>
 
-
           <div className="flex gap-3 w-full md:w-auto">
             <button
-              className="w-1/2 md:w-auto px-6 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 shadow-lg
-                         bg-gradient-to-r from-blue-600 to-blue-700 text-white
-                         hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105
-                         relative overflow-hidden group"
-              onClick={() => alert("Cetak laporan (placeholder)")}
+              className="w-1/2 md:w-auto px-6 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 shadow-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105 relative overflow-hidden group"
+              onClick={() => Swal.fire({title:"Info", text:"Fitur Cetak Laporan segera hadir", icon:"info", buttonsStyling: false, customClass: {confirmButton: "bg-blue-600 text-white px-6 py-2 rounded-lg"}})}
               type="button"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
@@ -192,10 +207,7 @@ export default function Peminjaman() {
             </button>
             
             <button
-              className="w-1/2 md:w-auto px-6 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 shadow-lg
-                         bg-gradient-to-r from-blue-600 to-blue-700 text-white
-                         hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105
-                         relative overflow-hidden group" 
+              className="w-1/2 md:w-auto px-6 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 shadow-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105 relative overflow-hidden group" 
               onClick={() => setIsModalOpen(true)} 
               type="button"
             >
@@ -206,10 +218,7 @@ export default function Peminjaman() {
           </div>
         </div>
 
-        
-        {/* Tabel */}
         <div className="bg-white rounded-lg shadow overflow-x-auto">
-          {/* ... (kode tabel tetap sama) ... */}
           <table className="min-w-full">
             <thead className="bg-slate-700 text-sm text-white uppercase">
               <tr>
@@ -265,9 +274,7 @@ export default function Peminjaman() {
           </table>
         </div>
 
-        {/* Pagination Footer */}
         <footer className="flex justify-end items-center mt-4">
-          {/* ... (kode pagination tetap sama) ... */}
           <div className="flex items-center gap-2">
             <button className="p-2 rounded-full hover:bg-gray-200 disabled:opacity-50" disabled>
               <IoChevronBack className="w-5 h-5" />
