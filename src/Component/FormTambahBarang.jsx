@@ -1,10 +1,6 @@
-// src/Component/FormTambahBarang.jsx
-
 import React, { useContext, useState } from "react";
 import { AppContext } from "../Context/AppContext";
-import Swal from "sweetalert2"; // Import SweetAlert2
-
-// Gunakan Ionicons 5 agar seragam dengan MasterData
+import Swal from "sweetalert2";
 import { IoClose, IoCloudUploadOutline } from "react-icons/io5";
 
 function FormTambahBarang({ onClose }) {
@@ -20,10 +16,11 @@ function FormTambahBarang({ onClose }) {
     if (!nama || !gambar) {
       Swal.fire({
         title: "Data Belum Lengkap!",
-        text: "Harap isi nama barang dan upload gambar.",
+        text: "Harap isi nama barang dan upload gambar",
         icon: "warning",
         confirmButtonColor: "#3085d6",
         confirmButtonText: "Oke",
+        customClass: { confirmButton: "bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"}
       });
       return;
     }

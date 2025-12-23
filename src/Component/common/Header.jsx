@@ -16,7 +16,7 @@ function Header() {
 
         <div className="flex items-center gap-3">
           <div className="text-right">
-            <div className="text-sm font-medium text-gray-700">Senku</div>
+            <div className="text-sm font-medium text-gray-700">Raa</div>
           </div>
           <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
             <svg

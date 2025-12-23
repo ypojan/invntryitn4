@@ -40,8 +40,7 @@ const REAL_MODELS = {
 };
 
 /* =================================================================
-   3. GENERATOR DATA DUMMY (VERSI RINGAN)
-   Dikurangi jadi 3 per kategori agar tidak Error QuotaExceeded
+   3. GENERATOR DATA DUMMY
 ================================================================= */
 const generateDummyDetailData = () => {
   const allData = [];
@@ -49,7 +48,6 @@ const generateDummyDetailData = () => {
   MASTER_CATEGORIES.forEach((cat) => {
     const models = REAL_MODELS[cat.title] || ["Tipe Standar", "Tipe Pro"];
 
-    // LOOP DIKURANGI JADI 3 (Supaya LocalStorage Muat)
     for (let i = 0; i < 3; i++) {
       const modelName = models[i % models.length];
 
@@ -59,7 +57,7 @@ const generateDummyDetailData = () => {
         tanggal: `0${i + 1}/01/2025`,
         spesifikasi: modelName, 
         gambar: cat.image,
-        jumlah: 5, // Stok per item
+        jumlah: 5, 
         hargaSatuan: 2000000 * (i + 1),
         totalHarga: (2000000 * (i + 1)) * 5,
         kondisi: { bagus: 3, diperbaiki: 1, rusak: 1 } 
@@ -74,34 +72,40 @@ const initialDetailData = generateDummyDetailData();
 
 export default function AppContextProvider({ children }) {
   
-  /* --- ROUTING --- */
-  const getInitialRoute = () => window.location.hash.replace("#", "") || "lobby";
+  /* --- ROUTING BARU (CLEAN URL + PERSISTENCE) --- */
+  
+  // 1. Cek LocalStorage saat pertama kali load
+  const getInitialRoute = () => {
+    // Ambil halaman terakhir yang disimpan
+    const savedRoute = localStorage.getItem("activeRoute");
+    // Kalau ada, pakai itu. Kalau tidak, masuk ke 'lobby'
+    return savedRoute || "lobby";
+  };
+
   const [route, setRouteInternal] = useState(getInitialRoute);
   const [selectedCategory, setSelectedCategory] = useState(null);
 
   const setRoute = (newRoute, category = null) => {
     setRouteInternal(newRoute);
     if (category) setSelectedCategory(category);
-    newRoute === "lobby"
-      ? window.history.pushState(null, "", window.location.pathname)
-      : (window.location.hash = newRoute);
+
+    // 2. SIMPAN POSISI KE LOCALSTORAGE (Ingatan Gajah)
+    // Setiap kali pindah halaman, kita catat di buku harian browser
+    localStorage.setItem("activeRoute", newRoute);
+
+    // 3. BERSIHKAN URL (Agar tidak ada #pagar)
+    // Kita paksa URL browser tetap bersih (contoh: localhost:5173/)
+    window.history.replaceState(null, "", "/");
   };
 
-  useEffect(() => {
-    const handleHashChange = () => {
-      setRouteInternal(window.location.hash.replace("#", "") || "lobby");
-    };
-    window.addEventListener("hashchange", handleHashChange);
-    return () => window.removeEventListener("hashchange", handleHashChange);
-  }, []);
+  // Kita hapus useEffect 'hashchange' karena kita tidak pakai pagar (#) lagi.
 
   /* --- MODAL --- */
-  const [modal, setModal] = useState({ tambahBarang: false });
+  const [modal, setModal] = useState({ tambahBarang: false, peminjaman: false });
   const openModal = (name) => setModal((prev) => ({ ...prev, [name]: true }));
-  const closeModal = () => setModal({ tambahBarang: false });
+  const closeModal = () => setModal({ tambahBarang: false, peminjaman: false });
 
   /* --- INVENTORY STATE --- */
-  // GANTI KEY KE '_v3' AGAR DATA LAMA YANG PENUH DIHAPUS OTOMATIS
   const STORAGE_KEY_ITEMS = "inventoryItems_v3";
   const STORAGE_KEY_DETAILS = "detailBarangData_v3";
 
@@ -110,7 +114,6 @@ export default function AppContextProvider({ children }) {
       const saved = localStorage.getItem(STORAGE_KEY_ITEMS);
       return saved ? JSON.parse(saved) : MASTER_CATEGORIES;
     } catch (error) {
-      console.error("Gagal load storage:", error);
       return MASTER_CATEGORIES;
     }
   });
@@ -124,16 +127,14 @@ export default function AppContextProvider({ children }) {
      }
   });
 
-  // PENGAMANAN PENYIMPANAN (TRY-CATCH)
   useEffect(() => {
     try {
       localStorage.setItem(STORAGE_KEY_ITEMS, JSON.stringify(inventoryItems));
       localStorage.setItem(STORAGE_KEY_DETAILS, JSON.stringify(detailBarangData));
     } catch (error) {
-      console.error("Penyimpanan Penuh! Tidak bisa menyimpan data baru.", error);
-      // Opsional: Alert ke user jika mau
       if (error.name === 'QuotaExceededError') {
-        alert("Penyimpanan Browser Penuh. Data mungkin tidak tersimpan permanen.");
+        // Silent error atau handling simple
+        console.error("Storage Penuh");
       }
     }
   }, [inventoryItems, detailBarangData]);
