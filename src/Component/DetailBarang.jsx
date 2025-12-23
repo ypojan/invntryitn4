@@ -15,6 +15,8 @@ export default function DetailBarang() {
   const { setRoute, selectedCategory, detailBarangData } = useContext(AppContext);
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  
+  // Menggunakan state lokal agar bisa dimanipulasi (tambah/hapus) tanpa reload
   const [localData, setLocalData] = useState(detailBarangData);
 
   // --- PAGINATION STATE ---
@@ -42,6 +44,7 @@ export default function DetailBarang() {
     if (currentPage > 1) setCurrentPage(prev => prev - 1);
   };
 
+  // Reset pagination ke halaman 1 jika filter berubah
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, selectedCategory]);
@@ -106,7 +109,11 @@ export default function DetailBarang() {
         rusak: newData.kondisi === 'rusak' ? newData.jumlah : 0 
       }
     };
-    setLocalData(prev => [...prev, newItem]);
+    
+    // PERUBAHAN DI SINI:
+    // newItem ditaruh di depan array ([newItem, ...prev])
+    // agar data baru muncul di baris paling atas tabel.
+    setLocalData(prev => [newItem, ...prev]);
   };
 
   return (
@@ -141,7 +148,7 @@ export default function DetailBarang() {
         </div>
 
         <div className="flex gap-3 w-full md:w-auto">
-          {/* TOMBOL CETAK LAPORAN (Style Baru) */}
+          {/* TOMBOL CETAK LAPORAN */}
           <button
             onClick={() => Swal.fire("Info", "Fitur Cetak Coming Soon", "info")}
             className="w-1/2 md:w-auto px-6 py-2 rounded-lg flex items-center justify-center gap-2 
@@ -155,7 +162,7 @@ export default function DetailBarang() {
             <span className="relative z-10 text-sm">Cetak Laporan</span>
           </button>
 
-          {/* TOMBOL TAMBAH SPESIFIKASI (Style Baru) */}
+          {/* TOMBOL TAMBAH SPESIFIKASI */}
           <button
             onClick={() => setIsModalOpen(true)}
             className="w-1/2 md:w-auto px-6 py-2 rounded-lg flex items-center justify-center gap-2 
