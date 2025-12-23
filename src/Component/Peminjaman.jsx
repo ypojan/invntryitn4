@@ -1,8 +1,8 @@
 // src/Component/Peminjaman.jsx
 
-import React, { useState, useContext } from "react"; 
+import React, { useState, useContext, useEffect } from "react"; 
 import { AppContext } from "../Context/AppContext"; 
-import Swal from "sweetalert2"; // Import SweetAlert2
+import Swal from "sweetalert2"; 
 
 import { 
   IoSearchOutline, 
@@ -13,7 +13,8 @@ import {
   IoTrashOutline, 
   IoArrowBack,
   IoChevronBack,
-  IoChevronForward
+  IoChevronForward,
+  IoDocumentTextOutline
 } from "react-icons/io5";
 
 import Modal from "./common/Modal"; 
@@ -45,6 +46,11 @@ export default function Peminjaman() {
 
   const { setRoute } = useContext(AppContext);
 
+  // --- PAGINATION STATE ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  // Filter Data Logic
   const filtered = data.filter((r) => {
     const q = query.trim().toLowerCase();
     if (!q && !date) return true;
@@ -56,89 +62,85 @@ export default function Peminjaman() {
     return matchQ && matchDate;
   });
 
+  // --- LOGIKA PAGINATION ---
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filtered.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(prev => prev + 1);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage(prev => prev - 1);
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [query, date]);
+
   function formatDateInputToDisplay(value) {
     if (!value) return "";
     const [y, m, d] = value.split("-");
     return `${d}/${m}/${y}`;
   }
 
-  function handleEdit(row) {
+  // --- FUNGSI TAMBAH DATA BARU (Dari Form) ---
+  const handleSimpanData = (newData) => {
+    // Tambahkan ke state data (paling atas)
+    setData(prev => [newData, ...prev]);
+    
     Swal.fire({
-      title: "Info",
-      text: `Fitur edit untuk ${row.spesifikasi} akan segera hadir!`,
-      icon: "info",
-      confirmButtonText: "Oke",
-      buttonsStyling: false,
-      customClass: {
-        confirmButton: "bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-      }
+      title: "Berhasil!",
+      text: "Data peminjaman berhasil ditambahkan.",
+      icon: "success",
+      timer: 2000,
+      showConfirmButton: false
     });
+    setIsModalOpen(false);
+  };
+
+  function handleEdit(row) {
+    Swal.fire("Info", "Fitur edit segera hadir!", "info");
   }
 
-  // --- PERBAIKAN FUNGSI DELETE ---
   function handleDelete(row) {
     Swal.fire({
-      title: "Yakin ingin menghapus?",
-      text: `Data peminjaman "${row.spesifikasi}" akan dihapus permanen.`,
+      title: "Yakin hapus?",
+      text: `Data ${row.spesifikasi} akan dihapus.`,
       icon: "warning",
       showCancelButton: true,
-      
-      // Matikan styling bawaan SweetAlert biar tidak bentrok
-      buttonsStyling: false,
-      
-      // Pakai class Tailwind biar tombolnya cantik & terlihat jelas
-      customClass: {
-        popup: 'rounded-2xl p-6',
-        title: 'text-xl font-bold text-gray-800',
-        htmlContainer: 'text-gray-600',
-        // Tombol Konfirmasi (Kiri) - Biru
-        confirmButton: 'bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors mx-2',
-        // Tombol Batal (Kanan) - Merah
-        cancelButton: 'bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors mx-2'
-      },
-      
       confirmButtonText: "Ya, Hapus",
-      cancelButtonText: "Batal",
-      reverseButtons: false // Pastikan ini false agar "Ya, Hapus" di Kiri
+      cancelButtonText: "Batal"
     }).then((result) => {
       if (result.isConfirmed) {
         setData((prev) => prev.filter((p) => p.id !== row.id));
-        Swal.fire({
-          title: "Terhapus!",
-          text: "Data berhasil dihapus.",
-          icon: "success",
-          buttonsStyling: false,
-          customClass: {
-            confirmButton: "bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors"
-          }
-        });
+        Swal.fire("Terhapus!", "Data berhasil dihapus.", "success");
       }
     });
   }
 
   function handleViewSurat(row) {
-    Swal.fire({
-      title: "Surat Peminjaman",
-      text: `Detail surat untuk ID: ${row.id}`,
-      icon: "info",
-      buttonsStyling: false,
-      customClass: { confirmButton: "bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700" }
-    });
+    if(row.suratFile){
+        // Jika ada file (simulasi)
+        const fileName = row.suratFile.name || "File Surat";
+        Swal.fire("Surat Peminjaman", `File: ${fileName}`, "info");
+    } else {
+        Swal.fire("Surat Peminjaman", `Detail surat ID: ${row.id}`, "info");
+    }
   }
 
   function handleViewTandaTerima(row) {
-    Swal.fire({
-      title: "Tanda Terima",
-      text: `Bukti tanda terima untuk ID: ${row.id}`,
-      icon: "info",
-      buttonsStyling: false,
-      customClass: { confirmButton: "bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700" }
-    });
+    if(row.tandaTerimaFile){
+        const fileName = row.tandaTerimaFile.name || "File Tanda Terima";
+        Swal.fire("Tanda Terima", `File: ${fileName}`, "info");
+    } else {
+        Swal.fire("Tanda Terima", `Bukti tanda terima ID: ${row.id}`, "info");
+    }
   }
 
-  function submitSearch() {
-    document.getElementById("search-input")?.blur();
-  }
+  function submitSearch() { document.getElementById("search-input")?.blur(); }
   function focusDatePicker() {
     const el = document.getElementById("date-input");
     if (!el) return;
@@ -149,20 +151,15 @@ export default function Peminjaman() {
   return (
     <>
       <header className="mb-6 flex items-center gap-4">
-        <button 
-          onClick={() => setRoute("dashboard")} 
-          className="p-2 rounded-full hover:bg-gray-200 transition-colors"
-          title="Kembali ke Dashboard"
-        >
+        <button onClick={() => setRoute("dashboard")} className="p-2 rounded-full hover:bg-gray-200 transition-colors">
           <IoArrowBack className="w-6 h-6 text-gray-700" />
         </button>
-        <h1 className="text-3xl font-bold text-gray-900 py-2">
-          Peminjaman Barang
-        </h1>
+        <h1 className="text-3xl font-bold text-gray-900 py-2">Peminjaman Barang</h1>
       </header>
 
       <section>
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+          {/* ... Bagian Filter Tanggal & Search SAMA SEPERTI SEBELUMNYA ... */}
           <div className="flex items-center gap-3 w-full md:w-auto">
             <div className="relative">
               <input
@@ -196,102 +193,96 @@ export default function Peminjaman() {
           </div>
 
           <div className="flex gap-3 w-full md:w-auto">
-            <button
-              className="w-1/2 md:w-auto px-6 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 shadow-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105 relative overflow-hidden group"
-              onClick={() => Swal.fire({title:"Info", text:"Fitur Cetak Laporan segera hadir", icon:"info", buttonsStyling: false, customClass: {confirmButton: "bg-blue-600 text-white px-6 py-2 rounded-lg"}})}
-              type="button"
+             <button
+              className="w-1/2 md:w-auto px-6 py-3 rounded-lg flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg transition-all"
+              onClick={() => Swal.fire("Info", "Fitur Cetak belum tersedia", "info")}
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-              <IoPrintOutline className="w-5 h-5 relative z-10" /> 
-              <span className="font-semibold text-sm relative z-10">Cetak Laporan</span> 
+              <IoPrintOutline className="w-5 h-5" /> 
+              <span className="font-semibold text-sm">Cetak Laporan</span> 
             </button>
             
             <button
-              className="w-1/2 md:w-auto px-6 py-3 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 shadow-lg bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 hover:shadow-xl transform hover:scale-105 relative overflow-hidden group" 
+              className="w-1/2 md:w-auto px-6 py-3 rounded-lg flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg transition-all" 
               onClick={() => setIsModalOpen(true)} 
-              type="button"
             >
-              <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-              <IoAdd className="w-5 h-5 relative z-10" /> 
-              <span className="font-semibold text-sm relative z-10">Peminjaman Barang</span>
+              <IoAdd className="w-5 h-5" /> 
+              <span className="font-semibold text-sm">Peminjaman Barang</span>
             </button>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow overflow-x-auto">
-          <table className="min-w-full">
-            <thead className="bg-slate-700 text-sm text-white uppercase">
-              <tr>
-                <th className="px-6 py-3 text-left font-semibold">Tanggal Peminjaman</th>
-                <th className="px-6 py-3 text-left font-semibold">ID Barang</th>
-                <th className="px-6 py-3 text-left font-semibold">Spesifikasi</th>
-                <th className="px-6 py-3 text-left font-semibold">Jumlah</th>
-                <th className="px-6 py-3 text-left font-semibold">Unit/Bagian</th>
-                <th className="px-6 py-3 text-left font-semibold">Surat Peminjaman</th>
-                <th className="px-6 py-3 text-left font-semibold">Tanda Terima</th>
-                <th className="px-6 py-3 text-center font-semibold">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="text-sm text-gray-800 divide-y divide-gray-200">
-              {filtered.length === 0 ? (
+        {/* TABEL */}
+        <div className="bg-white rounded-lg shadow border border-gray-200 flex flex-col">
+          <div className="overflow-x-auto w-full">
+            <table className="min-w-full whitespace-nowrap">
+              <thead className="bg-slate-700 text-sm text-white uppercase">
                 <tr>
-                  <td colSpan="8" className="px-6 py-8 text-center text-gray-500">
-                    Tidak ada data yang cocok dengan pencarian Anda.
-                  </td>
+                  <th className="px-6 py-4 text-left font-semibold">Tanggal Peminjaman</th>
+                  <th className="px-6 py-4 text-left font-semibold">ID Barang</th>
+                  <th className="px-6 py-4 text-left font-semibold">Spesifikasi</th>
+                  <th className="px-6 py-4 text-left font-semibold">Jumlah</th>
+                  <th className="px-6 py-4 text-left font-semibold">Unit/Bagian</th>
+                  <th className="px-6 py-4 text-left font-semibold">Surat Peminjaman</th>
+                  <th className="px-6 py-4 text-left font-semibold">Tanda Terima</th>
+                  <th className="px-6 py-4 text-center font-semibold">Aksi</th>
                 </tr>
-              ) : (
-                filtered.map((row) => (
-                  <tr key={row.id} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 whitespace-nowrap">{row.tanggal}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{row.id}</td>
-                    <td className="px-6 py-4 max-w-xs truncate">{row.spesifikasi}</td>
-                    <td className="px-6 py-4">{row.jumlah}</td>
-                    <td className="px-6 py-4">{row.unit}</td>
-                    <td className="px-6 py-4">
-                      <button className="text-blue-600 hover:text-blue-800 font-medium text-sm" onClick={() => handleViewSurat(row)}>
-                        Lihat Detail
-                      </button>
-                    </td>
-                    <td className="px-6 py-4">
-                      <button className="text-blue-600 hover:text-blue-800 font-medium text-sm" onClick={() => handleViewTandaTerima(row)}>
-                        Lihat Detail
-                      </button>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <div className="inline-flex items-center gap-2">
-                        <button className="p-2 rounded-full text-blue-600 hover:bg-blue-100" onClick={() => handleEdit(row)} title="Edit">
-                          <IoPencil className="w-4 h-4" />
-                        </button>
-                        <button className="p-2 rounded-full text-red-600 hover:bg-red-100" onClick={() => handleDelete(row)} title="Hapus">
-                          <IoTrashOutline className="w-4 h-4" />
-                        </button>
-                      </div>
+              </thead>
+              <tbody className="text-sm text-gray-800 divide-y divide-gray-200">
+                {currentItems.length > 0 ? (
+                  currentItems.map((row) => (
+                    <tr key={row.id} className="hover:bg-blue-50 transition-colors">
+                      <td className="px-6 py-4">{row.tanggal}</td>
+                      <td className="px-6 py-4">{row.id}</td>
+                      <td className="px-6 py-4 max-w-xs truncate font-medium">{row.spesifikasi}</td>
+                      <td className="px-6 py-4 font-bold">{row.jumlah}</td>
+                      <td className="px-6 py-4">{row.unit}</td>
+                      <td className="px-6 py-4">
+                        <button className="text-blue-600 hover:text-blue-800 font-medium text-sm" onClick={() => handleViewSurat(row)}>Lihat Detail</button>
+                      </td>
+                      <td className="px-6 py-4">
+                        <button className="text-blue-600 hover:text-blue-800 font-medium text-sm" onClick={() => handleViewTandaTerima(row)}>Lihat Detail</button>
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <div className="inline-flex items-center gap-2">
+                          <button className="p-2 rounded-full text-blue-600 hover:bg-blue-100" onClick={() => handleEdit(row)}><IoPencil className="w-4 h-4" /></button>
+                          <button className="p-2 rounded-full text-red-600 hover:bg-red-100" onClick={() => handleDelete(row)}><IoTrashOutline className="w-4 h-4" /></button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="8" className="text-center py-12 text-gray-400">
+                        <div className="flex flex-col items-center">
+                            <IoDocumentTextOutline className="w-12 h-12 mb-2 opacity-20"/>
+                            <p>Tidak ada data peminjaman.</p>
+                        </div>
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        <footer className="flex justify-end items-center mt-4">
-          <div className="flex items-center gap-2">
-            <button className="p-2 rounded-full hover:bg-gray-200 disabled:opacity-50" disabled>
-              <IoChevronBack className="w-5 h-5" />
-            </button>
-            <span className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-semibold">
-              1
-            </span>
-            <button className="p-2 rounded-full hover:bg-gray-200 disabled:opacity-50" disabled>
-              <IoChevronForward className="w-5 h-5" />
-            </button>
+                )}
+              </tbody>
+            </table>
           </div>
-        </footer>
 
+          {/* PAGINATION */}
+          {filtered.length > 0 && (
+            <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-end items-center gap-4">
+               <div className="flex items-center gap-2">
+                  <button onClick={handlePrevPage} disabled={currentPage === 1} className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-gray-600"><IoChevronBack className="w-5 h-5" /></button>
+                  <span className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-semibold shadow-sm">{currentPage} / {totalPages}</span>
+                  <button onClick={handleNextPage} disabled={currentPage === totalPages} className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-gray-600"><IoChevronForward className="w-5 h-5" /></button>
+                </div>
+            </div>
+          )}
+        </div>
       </section>
 
+      {/* MODAL dengan Props onSimpan */}
       <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} width="612px">
-        <FormPeminjaman onClose={() => setIsModalOpen(false)} />
+        <FormPeminjaman 
+            onClose={() => setIsModalOpen(false)} 
+            onSimpan={handleSimpanData} // Kirim fungsi simpan ke anak
+        />
       </Modal>
     </>
   );

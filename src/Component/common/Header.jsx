@@ -3,14 +3,14 @@ import logoptpn4 from "../../assets/logoptpn4.png";
 
 function Header() {
   return (
-    <div className="bg-[#d3e1ee] border-b border-gray-200 px-8 py-4">
+    <div className="bg-[#d3e1ee] border-b border-gray-200 px-6 py-2">
       <div className="flex items-center justify-between">
 
         <div className="flex items-center">
             <img 
               src={logoptpn4} 
               alt="Logo PTPN IV" 
-              className="h-12 w-auto" 
+              className="h-12 w-auto object-contain" 
             />
         </div>
 
@@ -18,9 +18,9 @@ function Header() {
           <div className="text-right">
             <div className="text-sm font-medium text-gray-700">Raa</div>
           </div>
-          <div className="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
+          <div className="w-9 h-9 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
             <svg
-              className="w-8 h-8 text-gray-600"
+              className="w-5 h-5 text-gray-600"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

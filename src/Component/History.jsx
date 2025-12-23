@@ -1,8 +1,8 @@
 // src/Component/History.jsx
 
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import { AppContext } from "../Context/AppContext";
-import Swal from "sweetalert2"; // Import SweetAlert2
+import Swal from "sweetalert2"; 
 
 import laptopImg from "../assets/laptop.png";
 import pcImg from "../assets/pc.png";
@@ -16,6 +16,10 @@ import {
 const addingData = [
   { id: "01111", tanggal: "04/01/2025", spesifikasi: "MSI Stealth A16 Mercedes", gambar: laptopImg, jumlah: 1, hargaSatuan: 50000000, totalHarga: 50000000 },
   { id: "01112", tanggal: "05/01/2025", spesifikasi: "Lenovo Yoga", gambar: pcImg, jumlah: 10, hargaSatuan: 5000000, totalHarga: 50000000 },
+  { id: "01113", tanggal: "06/01/2025", spesifikasi: "Asus ROG", gambar: laptopImg, jumlah: 2, hargaSatuan: 15000000, totalHarga: 30000000 },
+  { id: "01114", tanggal: "07/01/2025", spesifikasi: "HP Pavilion", gambar: pcImg, jumlah: 5, hargaSatuan: 7000000, totalHarga: 35000000 },
+  { id: "01115", tanggal: "08/01/2025", spesifikasi: "Dell XPS", gambar: laptopImg, jumlah: 1, hargaSatuan: 20000000, totalHarga: 20000000 },
+  { id: "01116", tanggal: "09/01/2025", spesifikasi: "Macbook Air", gambar: laptopImg, jumlah: 3, hargaSatuan: 18000000, totalHarga: 54000000 },
 ];
 
 const borrowingData = [
@@ -32,10 +36,13 @@ export default function History() {
   const [activeTab, setActiveTab] = useState("adding");
   const [searchTerm, setSearchTerm] = useState("");
   
-  // Perbaiki: State data lokal agar bisa dihapus
   const [dataAdding, setDataAdding] = useState(addingData);
   const [dataBorrowing, setDataBorrowing] = useState(borrowingData);
   const [dataReturning, setDataReturning] = useState(returningData);
+
+  // --- PAGINATION STATE ---
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5; // Tampilkan 5 data per halaman
 
   const formatRupiah = (number) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(number);
 
@@ -45,21 +52,40 @@ export default function History() {
     return dataReturning;
   };
 
-  const filterData = () => {
+  const getFilteredData = () => {
     return getCurrentData().filter((item) =>
       item.spesifikasi.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.id.toLowerCase().includes(searchTerm.toLowerCase())
     );
   };
 
-  // --- PERBAIKAN FUNGSI DELETE ---
+  const filteredResult = getFilteredData();
+
+  // --- LOGIKA PAGINATION ---
+  const totalPages = Math.ceil(filteredResult.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredResult.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) setCurrentPage(prev => prev + 1);
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) setCurrentPage(prev => prev - 1);
+  };
+
+  // Reset page kalau ganti Tab atau Search
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeTab, searchTerm]);
+
   const handleDelete = (id) => {
     Swal.fire({
       title: "Hapus History?",
       text: "Data ini akan dihapus dari riwayat secara permanen.",
       icon: "warning",
       showCancelButton: true,
-      
       buttonsStyling: false,
       customClass: {
         popup: 'rounded-2xl p-6',
@@ -68,7 +94,6 @@ export default function History() {
         confirmButton: 'bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors mx-2',
         cancelButton: 'bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors mx-2'
       },
-      
       confirmButtonText: "Ya, Hapus",
       cancelButtonText: "Batal",
       reverseButtons: false
@@ -123,9 +148,10 @@ export default function History() {
           ))}
         </div>
 
-        <div className="bg-white rounded-b-xl rounded-tr-xl shadow-lg border border-gray-200 overflow-hidden min-h-[500px]">
-          <div className="overflow-x-auto">
-            <table className="min-w-full">
+        <div className="bg-white rounded-b-xl rounded-tr-xl shadow-lg border border-gray-200 overflow-hidden min-h-[500px] flex flex-col">
+          {/* SCROLL WRAPPER */}
+          <div className="overflow-x-auto w-full flex-1">
+            <table className="min-w-full whitespace-nowrap">
               <thead className="bg-slate-700 text-white text-sm uppercase tracking-wider">
                 <tr>
                   <th className="px-6 py-4 text-center font-semibold">
@@ -153,58 +179,83 @@ export default function History() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {filterData().map((row, index) => (
-                  <tr key={index} className={`hover:bg-blue-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}>
-                    <td className="px-6 py-4 text-sm text-center text-gray-700 font-medium">{row.tanggal}</td>
-                    <td className="px-6 py-4 text-sm text-center text-gray-600">{row.id}</td>
-                    <td className="px-6 py-4 text-sm text-center text-gray-800 font-semibold">{row.spesifikasi}</td>
-                    <td className="px-6 py-4 flex justify-center">
-                      <div className="w-20 h-14 p-1 bg-white border border-gray-200 rounded-lg shadow-sm flex items-center justify-center">
-                        <img src={row.gambar} alt="produk" className="max-w-full max-h-full object-contain" />
+                {currentItems.length > 0 ? (
+                  currentItems.map((row, index) => (
+                    <tr key={index} className={`hover:bg-blue-50 transition-colors ${index % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}>
+                      <td className="px-6 py-4 text-sm text-center text-gray-700 font-medium">{row.tanggal}</td>
+                      <td className="px-6 py-4 text-sm text-center text-gray-600">{row.id}</td>
+                      <td className="px-6 py-4 text-sm text-center text-gray-800 font-semibold">{row.spesifikasi}</td>
+                      <td className="px-6 py-4 flex justify-center">
+                        <div className="w-20 h-14 p-1 bg-white border border-gray-200 rounded-lg shadow-sm flex items-center justify-center">
+                          {row.gambar ? <img src={row.gambar} alt="produk" className="max-w-full max-h-full object-contain" /> : "-"}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-center text-sm text-gray-700 font-bold">{row.jumlah}</td>
+                      {activeTab === 'adding' && (
+                        <>
+                          <td className="px-6 py-4 text-center text-sm text-gray-700">{formatRupiah(row.hargaSatuan)}</td>
+                          <td className="px-6 py-4 text-center text-sm font-bold text-gray-800">{formatRupiah(row.totalHarga)}</td>
+                          <td className="px-6 py-4 text-center">
+                            <button className="text-blue-600 hover:text-blue-800 font-medium text-sm" onClick={() => Swal.fire({title:"Info", text:"Detail kwitansi", icon:"info", buttonsStyling:false, customClass:{confirmButton:"bg-blue-600 text-white px-6 py-2 rounded-lg"}})}>Lihat Detail</button>
+                          </td>
+                        </>
+                      )}
+                      {(activeTab === 'borrowing' || activeTab === 'returning') && (
+                        <>
+                          <td className="px-6 py-4 text-sm text-center text-gray-700">{row.unit}</td>
+                          <td className="px-6 py-4 text-sm text-center text-gray-700 font-medium uppercase">{row.departement}</td>
+                          <td className="px-6 py-4 text-center">
+                            <button className="text-blue-600 hover:text-blue-800 font-medium text-sm" onClick={() => Swal.fire({title:"Info", text:"Detail surat", icon:"info", buttonsStyling:false, customClass:{confirmButton:"bg-blue-600 text-white px-6 py-2 rounded-lg"}})}>Lihat Detail</button>
+                          </td>
+                        </>
+                      )}
+                      <td className="px-6 py-4 text-center">
+                        <div className="inline-flex items-center gap-2 justify-center">
+                          <button onClick={() => handleDelete(row.id)} className="p-2 rounded-full text-red-600 hover:bg-red-100 transition-colors" title="Hapus"><IoTrashOutline className="w-4 h-4" /></button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                   <tr>
+                    <td colSpan="12" className="text-center py-12 text-gray-400">
+                      <div className="flex flex-col items-center justify-center">
+                        <IoDocumentTextOutline className="w-16 h-16 mb-4 opacity-20" />
+                        <p>Data tidak ditemukan.</p>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-center text-sm text-gray-700 font-bold">{row.jumlah}</td>
-                    {activeTab === 'adding' && (
-                      <>
-                        <td className="px-6 py-4 text-center text-sm text-gray-700">{formatRupiah(row.hargaSatuan)}</td>
-                        <td className="px-6 py-4 text-center text-sm font-bold text-gray-800">{formatRupiah(row.totalHarga)}</td>
-                        <td className="px-6 py-4 text-center">
-                          <button className="text-blue-600 hover:text-blue-800 font-medium text-sm" onClick={() => Swal.fire({title:"Info", text:"Detail kwitansi", icon:"info", buttonsStyling:false, customClass:{confirmButton:"bg-blue-600 text-white px-6 py-2 rounded-lg"}})}>Lihat Detail</button>
-                        </td>
-                      </>
-                    )}
-                    {(activeTab === 'borrowing' || activeTab === 'returning') && (
-                      <>
-                        <td className="px-6 py-4 text-sm text-center text-gray-700">{row.unit}</td>
-                        <td className="px-6 py-4 text-sm text-center text-gray-700 font-medium uppercase">{row.departement}</td>
-                        <td className="px-6 py-4 text-center">
-                          <button className="text-blue-600 hover:text-blue-800 font-medium text-sm" onClick={() => Swal.fire({title:"Info", text:"Detail surat", icon:"info", buttonsStyling:false, customClass:{confirmButton:"bg-blue-600 text-white px-6 py-2 rounded-lg"}})}>Lihat Detail</button>
-                        </td>
-                      </>
-                    )}
-                    <td className="px-6 py-4 text-center">
-                      <div className="inline-flex items-center gap-2 justify-center">
-                        <button onClick={() => handleDelete(row.id)} className="p-2 rounded-full text-red-600 hover:bg-red-100 transition-colors" title="Hapus"><IoTrashOutline className="w-4 h-4" /></button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                   </tr>
+                )}
               </tbody>
             </table>
           </div>
-          {filterData().length === 0 && (
-            <div className="flex flex-col items-center justify-center h-48 text-gray-400">
-               <IoDocumentTextOutline className="w-16 h-16 mb-4 opacity-20" />
-               <p>Data tidak ditemukan.</p>
+
+          {/* FOOTER PAGINATION */}
+          {filteredResult.length > 0 && (
+            <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-end items-center gap-4">
+               <div className="flex items-center gap-2">
+                  <button 
+                    onClick={handlePrevPage}
+                    disabled={currentPage === 1}
+                    className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-gray-600 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <IoChevronBack className="w-5 h-5" />
+                  </button>
+                  
+                  <span className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-semibold shadow-sm">
+                    {currentPage} / {totalPages}
+                  </span>
+
+                  <button 
+                    onClick={handleNextPage}
+                    disabled={currentPage === totalPages}
+                    className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-gray-600 disabled:cursor-not-allowed transition-colors"
+                  >
+                    <IoChevronForward className="w-5 h-5" />
+                  </button>
+                </div>
             </div>
           )}
-          <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-end">
-             <div className="flex items-center gap-2">
-                <button className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-gray-600" disabled><IoChevronBack className="w-5 h-5" /></button>
-                <span className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-semibold shadow-sm">1</span>
-                <button className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-gray-600" disabled><IoChevronForward className="w-5 h-5" /></button>
-              </div>
-          </div>
         </div>
       </section>
     </>
