@@ -101,6 +101,11 @@ export default function Pengembalian() {
       text: `Data ${row.spesifikasi} akan dihapus.`,
       icon: "warning",
       showCancelButton: true,
+      customClass: {
+        popup: 'rounded-2xl p-6',
+        confirmButton: 'bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 mx-2',
+        cancelButton: 'bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 mx-2'
+      },
       confirmButtonText: "Ya, Hapus",
       cancelButtonText: "Batal"
     }).then((result) => {

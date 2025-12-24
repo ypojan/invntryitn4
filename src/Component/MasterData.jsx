@@ -1,10 +1,7 @@
-// src/Component/MasterData.jsx
-
 import React, { useContext, useMemo, useState, useEffect } from "react";
 import { AppContext } from "../Context/AppContext.jsx";
 import Swal from "sweetalert2"; 
-import Chart from "react-apexcharts"; // Import ApexCharts
-
+import Chart from "react-apexcharts";
 import {
   IoSearchOutline,
   IoChevronDown,
@@ -56,7 +53,7 @@ function MasterData() {
     return { total, bagus, diperbaiki, rusak };
   }, [detailBarangData]);
 
-  // --- KONFIGURASI CHART (Bentuk Donut seperti Gambar) ---
+  // KONFIGURASI CHART
   const chartSeries = [
     kondisiSummary.bagus, 
     kondisiSummary.diperbaiki, 
@@ -65,40 +62,41 @@ function MasterData() {
 
   const chartOptions = {
     chart: {
-      type: 'donut', // Menentukan bentuk chart
+      type: 'donut',
     },
     labels: ["Bagus", "Diperbaiki", "Rusak"],
-    colors: ["#38BDF8", "#2563EB", "#EF4444"], // Warna: Biru Muda, Biru Tua, Merah
+    colors: ["#38BDF8", "#2563EB", "#EF4444"],
     plotOptions: {
       pie: {
         donut: {
-          size: '70%', // Ketebalan donut (semakin besar %, semakin tipis)
+          size: '55%', // Ketebalan donut (semakin besar %, semakin tipis)
           labels: {
             show: true,
             total: {
               show: true,
-              label: 'Total Unit',
+              label: 'Total Unit', 
               fontSize: '16px',
+              fontWeight: 'bold',
               color: '#64748b',
-              formatter: () => kondisiSummary.total // Menampilkan angka total di tengah
+              formatter: () => kondisiSummary.total
             }
           }
         }
       }
     },
     dataLabels: { 
-      enabled: true, // 1. Ubah jadi true (wajib)
+      enabled: true, 
       formatter: function (val) {
-        return Math.round(val) + "%"  // 2. Format angkanya (misal: 25%)
+        return Math.round(val) + "%"
       },
       style: {
         fontSize: '12px',
         fontFamily: 'inherit',
         fontWeight: 'bold',
-        colors: ['#fff'] // Warna teks putih
+        colors: ['#fff']
       },
       dropShadow: {
-        enabled: false // Matikan bayangan teks biar lebih tajam
+        enabled: false
       }
     },
     // ------------------------------
@@ -109,7 +107,7 @@ function MasterData() {
     }
   };
 
-  // Data untuk Legend Custom di Kiri
+  // Data untuk Custom di Kiri
   const statusData = [
     { label: "Bagus", value: kondisiSummary.total ? Math.round((kondisiSummary.bagus / kondisiSummary.total) * 100) : 0, color: "#38BDF8" },
     { label: "Diperbaiki", value: kondisiSummary.total ? Math.round((kondisiSummary.diperbaiki / kondisiSummary.total) * 100) : 0, color: "#2563EB" },
@@ -178,8 +176,12 @@ function MasterData() {
         </div>
         <button
           onClick={() => openModal("tambahBarang")}
-          className="w-full md:w-auto ml-auto px-6 py-3 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold shadow-md hover:shadow-lg transition-all active:scale-95"
-        >
+          className="w-full md:w-auto ml-auto px-6 py-3 rounded-xl flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold 
+                       shadow-md shadow-blue-200 hover:from-blue-700 hover:to-blue-800 
+                       hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 active:scale-95 
+                       relative overflow-hidden group"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>
           <IoAdd size={20} /> <span>Tambah Data</span>
         </button>
       </div>
@@ -226,12 +228,12 @@ function MasterData() {
         </div>
       )}
 
-      {/* --- CHART SECTION (DIGANTI DENGAN APEXCHARTS) --- */}
+      {/* --- CHART SECTION --- */}
       <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 shadow-sm border border-blue-100">
         <h2 className="text-2xl font-bold mb-6 text-slate-800">Status Kondisi Barang</h2>
         <div className="flex flex-col md:flex-row items-center justify-between gap-8">
           
-          {/* Legend Custom di Kiri (Tetap dipertahankan agar detail) */}
+          {/* Legend Custom di Kiri */}
           <div className="space-y-4 w-full md:w-auto">
             {statusData.map((item, i) => (
               <div key={i} className="flex items-center gap-4 bg-white p-3 rounded-xl shadow-sm border border-slate-100">

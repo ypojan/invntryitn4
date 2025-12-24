@@ -169,7 +169,7 @@ export default function DetailBarang() {
                        bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold 
                        shadow-md shadow-blue-200 hover:from-blue-700 hover:to-blue-800 
                        hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 active:scale-95 
-                       relative overflow-hidden group"
+                       relative overflow-hidden group"  
           >
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>
             <IoAdd className="w-5 h-5 relative z-10" /> 
@@ -218,7 +218,7 @@ export default function DetailBarang() {
                     <td className="px-4 py-3 text-center text-gray-600">{formatRupiah(item.hargaSatuan)}</td>
                     <td className="px-4 py-3 text-center font-bold text-gray-800">{formatRupiah(item.totalHarga)}</td>
                     <td className="px-4 py-3 text-center">
-                        <button className="bg-gray-300 text-gray-700 px-3 py-1.5 rounded-md text-xs font-bold hover:bg-gray-400 transition-colors">Lihat Detail</button>
+                        <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">Lihat Detail</button>
                     </td>
                     <td className="px-4 py-3 text-center font-bold text-blue-600 bg-blue-50/30">{item.kondisi.bagus}</td>
                     <td className="px-4 py-3 text-center font-bold text-yellow-600 bg-yellow-50/30">{item.kondisi.diperbaiki}</td>

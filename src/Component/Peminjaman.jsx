@@ -1,9 +1,6 @@
-// src/Component/Peminjaman.jsx
-
 import React, { useState, useContext, useEffect } from "react"; 
 import { AppContext } from "../Context/AppContext"; 
 import Swal from "sweetalert2"; 
-
 import { 
   IoSearchOutline, 
   IoCalendarOutline, 
@@ -16,7 +13,6 @@ import {
   IoChevronForward,
   IoDocumentTextOutline
 } from "react-icons/io5";
-
 import Modal from "./common/Modal"; 
 import FormPeminjaman from "./FormPeminjaman.jsx"; 
 
@@ -46,11 +42,11 @@ export default function Peminjaman() {
 
   const { setRoute } = useContext(AppContext);
 
-  // --- PAGINATION STATE ---
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // Filter Data Logic
+  // FILTER DATA
   const filtered = data.filter((r) => {
     const q = query.trim().toLowerCase();
     if (!q && !date) return true;
@@ -62,7 +58,7 @@ export default function Peminjaman() {
     return matchQ && matchDate;
   });
 
-  // --- LOGIKA PAGINATION ---
+  // PAGINATION LOGIC 
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -86,16 +82,16 @@ export default function Peminjaman() {
     return `${d}/${m}/${y}`;
   }
 
-  // --- FUNGSI TAMBAH DATA BARU (Dari Form) ---
+  // FUNGSI TAMBAH DATA BARU
   const handleSimpanData = (newData) => {
-    // Tambahkan ke state data (paling atas)
+    // Tambahkan ke state data paling atas
     setData(prev => [newData, ...prev]);
     
     Swal.fire({
       title: "Berhasil!",
       text: "Data peminjaman berhasil ditambahkan.",
       icon: "success",
-      timer: 2000,
+      timer: 1500,
       showConfirmButton: false
     });
     setIsModalOpen(false);
@@ -111,6 +107,11 @@ export default function Peminjaman() {
       text: `Data ${row.spesifikasi} akan dihapus.`,
       icon: "warning",
       showCancelButton: true,
+      customClass: {
+        popup: 'rounded-2xl p-6',
+        confirmButton: 'bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 mx-2',
+        cancelButton: 'bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 mx-2'
+      },
       confirmButtonText: "Ya, Hapus",
       cancelButtonText: "Batal"
     }).then((result) => {
@@ -123,7 +124,7 @@ export default function Peminjaman() {
 
   function handleViewSurat(row) {
     if(row.suratFile){
-        // Jika ada file (simulasi)
+        // Jika ada file
         const fileName = row.suratFile.name || "File Surat";
         Swal.fire("Surat Peminjaman", `File: ${fileName}`, "info");
     } else {
@@ -159,7 +160,6 @@ export default function Peminjaman() {
 
       <section>
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-          {/* ... Bagian Filter Tanggal & Search SAMA SEPERTI SEBELUMNYA ... */}
           <div className="flex items-center gap-3 w-full md:w-auto">
             <div className="relative">
               <input
@@ -202,9 +202,14 @@ export default function Peminjaman() {
             </button>
             
             <button
-              className="w-1/2 md:w-auto px-6 py-3 rounded-lg flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white hover:from-blue-700 hover:to-blue-800 shadow-lg transition-all" 
-              onClick={() => setIsModalOpen(true)} 
-            >
+              className="w-1/2 md:w-auto px-6 py-3 rounded-lg flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold 
+                       shadow-md shadow-blue-200 hover:from-blue-700 hover:to-blue-800 
+                       hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 active:scale-95 
+                       relative overflow-hidden group" onClick={() => setIsModalOpen(true)}
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div> 
+               
+            
               <IoAdd className="w-5 h-5" /> 
               <span className="font-semibold text-sm">Peminjaman Barang</span>
             </button>
@@ -269,7 +274,7 @@ export default function Peminjaman() {
             <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-end items-center gap-4">
                <div className="flex items-center gap-2">
                   <button onClick={handlePrevPage} disabled={currentPage === 1} className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-gray-600"><IoChevronBack className="w-5 h-5" /></button>
-                  <span className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-semibold shadow-sm">{currentPage} / {totalPages}</span>
+                  <span className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-semibold ">{currentPage} / {totalPages}</span>
                   <button onClick={handleNextPage} disabled={currentPage === totalPages} className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-gray-600"><IoChevronForward className="w-5 h-5" /></button>
                 </div>
             </div>
