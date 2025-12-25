@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import Swal from "sweetalert2";
-import { IoCalendarOutline, IoCloudUploadOutline, IoClose, IoDocumentAttachOutline } from "react-icons/io5";
+import {
+  IoCalendarOutline,
+  IoCloudUploadOutline,
+  IoClose,
+  IoDocumentAttachOutline,
+} from "react-icons/io5";
 
 function FormPeminjaman({ onClose, onSimpan }) {
   // State untuk menampung data form
@@ -11,25 +16,26 @@ function FormPeminjaman({ onClose, onSimpan }) {
     jumlah: "",
     unit: "",
     suratFile: null,
-    tandaTerimaFile: null
+    tandaTerimaFile: null,
   });
 
   // Handle Perubahan Text Input
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   // Handle Input File (Validasi Max 2MB)
   const handleFileChange = (e, fieldName) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) { // 2MB dalam bytes
+      if (file.size > 2 * 1024 * 1024) {
+        // 2MB dalam bytes
         Swal.fire("Gagal", "Ukuran file maksimal 2MB!", "error");
         e.target.value = null; // Reset input
         return;
       }
-      setFormData(prev => ({ ...prev, [fieldName]: file }));
+      setFormData((prev) => ({ ...prev, [fieldName]: file }));
     }
   };
 
@@ -39,7 +45,11 @@ function FormPeminjaman({ onClose, onSimpan }) {
     // Validasi Jumlah Barang (Harus Bilangan Asli > 0)
     const jumlahInt = parseInt(formData.jumlah);
     if (!jumlahInt || jumlahInt < 1) {
-      Swal.fire("Validasi Error", "Jumlah barang harus minimal 1 (bilangan asli).", "warning");
+      Swal.fire(
+        "Validasi Error",
+        "Jumlah barang harus minimal 1 (bilangan asli).",
+        "warning"
+      );
       return;
     }
 
@@ -55,7 +65,7 @@ function FormPeminjaman({ onClose, onSimpan }) {
       jumlah: jumlahInt,
       unit: formData.unit,
       suratFile: formData.suratFile,
-      tandaTerimaFile: formData.tandaTerimaFile
+      tandaTerimaFile: formData.tandaTerimaFile,
     };
 
     // Kirim data ke Parent (Peminjaman.jsx)
@@ -63,11 +73,14 @@ function FormPeminjaman({ onClose, onSimpan }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{width: "550px"}}> 
-      
+    <form onSubmit={handleSubmit} style={{ width: "550px" }}>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Peminjaman Barang</h2>
-        <button type="button" onClick={onClose} className="text-gray-400 hover:text-red-600 bg-red-100 hover:bg-red-200 rounded-full p-1 transition-colors">
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-gray-400 hover:text-red-600 bg-red-100 hover:bg-red-200 rounded-full p-1 transition-colors"
+        >
           <IoClose className="w-6 h-6" />
         </button>
       </div>
@@ -75,7 +88,7 @@ function FormPeminjaman({ onClose, onSimpan }) {
       {/* Tanggal */}
       <div className="mb-4 relative">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          <span className="text-red-500">*</span> Tanggal Peminjaman
+          Tanggal Peminjaman
         </label>
         <input
           type="date" // Langsung pakai type="date" agar native picker browser muncul konsisten
@@ -92,7 +105,7 @@ function FormPeminjaman({ onClose, onSimpan }) {
       {/* ID Barang */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          <span className="text-red-500">*</span> ID Barang
+          ID Barang
         </label>
         <input
           type="text"
@@ -104,11 +117,11 @@ function FormPeminjaman({ onClose, onSimpan }) {
           required
         />
       </div>
-      
+
       {/* Spesifikasi */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          <span className="text-red-500">*</span> Spesifikasi
+          Spesifikasi
         </label>
         <input
           type="text"
@@ -120,11 +133,11 @@ function FormPeminjaman({ onClose, onSimpan }) {
           required
         />
       </div>
-      
+
       {/* Jumlah Barang */}
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          <span className="text-red-500">*</span> Jumlah Barang
+          Jumlah Barang
         </label>
         <input
           type="number"
@@ -141,7 +154,7 @@ function FormPeminjaman({ onClose, onSimpan }) {
       {/* Unit/Bagian */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          <span className="text-red-500">*</span> Unit/Bagian
+          Unit/Bagian
         </label>
         <input
           type="text"
@@ -156,23 +169,24 @@ function FormPeminjaman({ onClose, onSimpan }) {
 
       {/* File Uploads (2 Kolom) */}
       <div className="grid grid-cols-2 gap-6 mb-8">
-        
         {/* Surat Peminjaman */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            <span className="text-red-500">*</span> Surat Peminjaman
+            Surat Peminjaman
           </label>
           <label className="w-full flex flex-col justify-center items-center px-4 py-6 rounded-lg bg-blue-50 border-2 border-dashed border-blue-200 text-blue-500 hover:bg-blue-100 cursor-pointer transition-colors h-32 relative">
-            <input 
-              type="file" 
-              accept=".pdf" 
-              className="hidden" 
-              onChange={(e) => handleFileChange(e, "suratFile")} 
+            <input
+              type="file"
+              accept=".pdf"
+              className="hidden"
+              onChange={(e) => handleFileChange(e, "suratFile")}
             />
             {formData.suratFile ? (
               <div className="text-center text-green-600">
-                <IoDocumentAttachOutline className="w-8 h-8 mx-auto mb-1"/>
-                <p className="text-xs font-bold break-all line-clamp-2">{formData.suratFile.name}</p>
+                <IoDocumentAttachOutline className="w-8 h-8 mx-auto mb-1" />
+                <p className="text-xs font-bold break-all line-clamp-2">
+                  {formData.suratFile.name}
+                </p>
                 <p className="text-[10px] text-gray-500">Klik untuk ganti</p>
               </div>
             ) : (
@@ -184,41 +198,50 @@ function FormPeminjaman({ onClose, onSimpan }) {
             )}
           </label>
         </div>
-        
+
         {/* Tanda Terima */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            <span className="text-red-500">*</span> Tanda Terima
+            Tanda Terima
           </label>
           <label className="w-full flex flex-col justify-center items-center px-4 py-6 rounded-lg bg-blue-50 border-2 border-dashed border-blue-200 text-blue-500 hover:bg-blue-100 cursor-pointer transition-colors h-32 relative">
-             <input 
-                type="file" 
-                accept=".pdf" 
-                className="hidden" 
-                onChange={(e) => handleFileChange(e, "tandaTerimaFile")} 
-              />
-              {formData.tandaTerimaFile ? (
-                <div className="text-center text-green-600">
-                  <IoDocumentAttachOutline className="w-8 h-8 mx-auto mb-1"/>
-                  <p className="text-xs font-bold break-all line-clamp-2">{formData.tandaTerimaFile.name}</p>
-                  <p className="text-[10px] text-gray-500">Klik untuk ganti</p>
-                </div>
-              ) : (
-                <div className="text-center">
-                  <IoCloudUploadOutline className="w-8 h-8 mx-auto" />
-                  <p className="mt-2 font-semibold text-sm">Upload File</p>
-                  <p className="text-[10px] text-gray-500 mt-1">PDF, Max 2MB</p>
-                </div>
-              )}
+            <input
+              type="file"
+              accept=".pdf"
+              className="hidden"
+              onChange={(e) => handleFileChange(e, "tandaTerimaFile")}
+            />
+            {formData.tandaTerimaFile ? (
+              <div className="text-center text-green-600">
+                <IoDocumentAttachOutline className="w-8 h-8 mx-auto mb-1" />
+                <p className="text-xs font-bold break-all line-clamp-2">
+                  {formData.tandaTerimaFile.name}
+                </p>
+                <p className="text-[10px] text-gray-500">Klik untuk ganti</p>
+              </div>
+            ) : (
+              <div className="text-center">
+                <IoCloudUploadOutline className="w-8 h-8 mx-auto" />
+                <p className="mt-2 font-semibold text-sm">Upload File</p>
+                <p className="text-[10px] text-gray-500 mt-1">PDF, Max 2MB</p>
+              </div>
+            )}
           </label>
         </div>
       </div>
 
       <div className="flex justify-end gap-4">
-        <button type="button" onClick={onClose} className="px-6 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors">
+        <button
+          type="button"
+          onClick={onClose}
+          className="px-6 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors"
+        >
           Batal
         </button>
-        <button type="submit" className="px-6 py-2 rounded-lg bg-gray-700 text-white font-semibold hover:bg-gray-800 transition-colors">
+        <button
+          type="submit"
+          className="px-6 py-2 rounded-lg bg-gray-700 text-white font-semibold hover:bg-gray-800 transition-colors"
+        >
           Simpan
         </button>
       </div>

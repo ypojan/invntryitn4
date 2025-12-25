@@ -2,7 +2,12 @@
 
 import React, { useState } from "react";
 import Swal from "sweetalert2";
-import { IoCalendarOutline, IoCloudUploadOutline, IoClose, IoDocumentAttachOutline } from "react-icons/io5";
+import {
+  IoCalendarOutline,
+  IoCloudUploadOutline,
+  IoClose,
+  IoDocumentAttachOutline,
+} from "react-icons/io5";
 
 function FormPengembalian({ onClose, onSimpan }) {
   const [formData, setFormData] = useState({
@@ -12,23 +17,23 @@ function FormPengembalian({ onClose, onSimpan }) {
     jumlah: "",
     unit: "",
     suratFile: null,
-    tandaTerimaFile: null
+    tandaTerimaFile: null,
   });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleFileChange = (e, fieldName) => {
     const file = e.target.files[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) { 
+      if (file.size > 2 * 1024 * 1024) {
         Swal.fire("Gagal", "Ukuran file maksimal 2MB!", "error");
-        e.target.value = null; 
+        e.target.value = null;
         return;
       }
-      setFormData(prev => ({ ...prev, [fieldName]: file }));
+      setFormData((prev) => ({ ...prev, [fieldName]: file }));
     }
   };
 
@@ -38,7 +43,11 @@ function FormPengembalian({ onClose, onSimpan }) {
     // Validasi Bilangan Asli
     const jumlahInt = parseInt(formData.jumlah);
     if (!jumlahInt || jumlahInt < 1) {
-      Swal.fire("Validasi Error", "Jumlah barang harus minimal 1 (bilangan asli).", "warning");
+      Swal.fire(
+        "Validasi Error",
+        "Jumlah barang harus minimal 1 (bilangan asli).",
+        "warning"
+      );
       return;
     }
 
@@ -52,24 +61,30 @@ function FormPengembalian({ onClose, onSimpan }) {
       jumlah: jumlahInt,
       unit: formData.unit,
       suratFile: formData.suratFile,
-      tandaTerimaFile: formData.tandaTerimaFile
+      tandaTerimaFile: formData.tandaTerimaFile,
     };
 
     onSimpan(newData);
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{width: "550px"}}> 
+    <form onSubmit={handleSubmit} style={{ width: "550px" }}>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Pengembalian Barang</h2>
-        <button type="button" onClick={onClose} className="text-gray-400 hover:text-red-600 bg-red-100 hover:bg-red-200 rounded-full p-1 transition-colors">
+        <h2 className="text-2xl font-bold text-gray-800">
+          Pengembalian Barang
+        </h2>
+        <button
+          type="button"
+          onClick={onClose}
+          className="text-gray-400 hover:text-red-600 bg-red-100 hover:bg-red-200 rounded-full p-1 transition-colors"
+        >
           <IoClose className="w-6 h-6" />
         </button>
       </div>
 
       <div className="mb-4 relative">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          <span className="text-red-500">*</span> Tanggal Pengembalian
+          Tanggal Pengembalian
         </label>
         <input
           type="date"
@@ -84,7 +99,7 @@ function FormPengembalian({ onClose, onSimpan }) {
 
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          <span className="text-red-500">*</span> ID Barang
+          ID Barang
         </label>
         <input
           type="text"
@@ -96,10 +111,10 @@ function FormPengembalian({ onClose, onSimpan }) {
           required
         />
       </div>
-      
+
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          <span className="text-red-500">*</span> Spesifikasi
+          Spesifikasi
         </label>
         <input
           type="text"
@@ -111,10 +126,10 @@ function FormPengembalian({ onClose, onSimpan }) {
           required
         />
       </div>
-      
+
       <div className="mb-4">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          <span className="text-red-500">*</span> Jumlah Barang
+          Jumlah Barang
         </label>
         <input
           type="number"
@@ -130,7 +145,7 @@ function FormPengembalian({ onClose, onSimpan }) {
 
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          <span className="text-red-500">*</span> Unit/Bagian
+          Unit/Bagian
         </label>
         <input
           type="text"
@@ -146,54 +161,75 @@ function FormPengembalian({ onClose, onSimpan }) {
       <div className="grid grid-cols-2 gap-6 mb-8">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            <span className="text-red-500">*</span> Surat Pengembalian
+            Surat Pengembalian
           </label>
           <label className="w-full flex flex-col justify-center items-center px-4 py-6 rounded-lg bg-blue-50 border-2 border-dashed border-blue-200 text-blue-500 hover:bg-blue-100 cursor-pointer transition-colors h-32 relative">
-             <input type="file" accept=".pdf" className="hidden" onChange={(e) => handleFileChange(e, "suratFile")} />
-             {formData.suratFile ? (
-               <div className="text-center text-green-600">
-                 <IoDocumentAttachOutline className="w-8 h-8 mx-auto mb-1"/>
-                 <p className="text-xs font-bold break-all line-clamp-2">{formData.suratFile.name}</p>
-                 <p className="text-[10px] text-gray-500">Klik untuk ganti</p>
-               </div>
-             ) : (
-               <div className="text-center">
-                 <IoCloudUploadOutline className="w-8 h-8 mx-auto" />
-                 <p className="mt-2 font-semibold text-sm">Upload File</p>
-                 <p className="text-[10px] text-gray-500 mt-1">PDF, Max 2MB</p>
-               </div>
-             )}
+            <input
+              type="file"
+              accept=".pdf"
+              className="hidden"
+              onChange={(e) => handleFileChange(e, "suratFile")}
+            />
+            {formData.suratFile ? (
+              <div className="text-center text-green-600">
+                <IoDocumentAttachOutline className="w-8 h-8 mx-auto mb-1" />
+                <p className="text-xs font-bold break-all line-clamp-2">
+                  {formData.suratFile.name}
+                </p>
+                <p className="text-[10px] text-gray-500">Klik untuk ganti</p>
+              </div>
+            ) : (
+              <div className="text-center">
+                <IoCloudUploadOutline className="w-8 h-8 mx-auto" />
+                <p className="mt-2 font-semibold text-sm">Upload File</p>
+                <p className="text-[10px] text-gray-500 mt-1">PDF, Max 2MB</p>
+              </div>
+            )}
           </label>
         </div>
-        
+
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            <span className="text-red-500">*</span> Tanda Terima
+            Tanda Terima
           </label>
           <label className="w-full flex flex-col justify-center items-center px-4 py-6 rounded-lg bg-blue-50 border-2 border-dashed border-blue-200 text-blue-500 hover:bg-blue-100 cursor-pointer transition-colors h-32 relative">
-             <input type="file" accept=".pdf" className="hidden" onChange={(e) => handleFileChange(e, "tandaTerimaFile")} />
-             {formData.tandaTerimaFile ? (
-               <div className="text-center text-green-600">
-                 <IoDocumentAttachOutline className="w-8 h-8 mx-auto mb-1"/>
-                 <p className="text-xs font-bold break-all line-clamp-2">{formData.tandaTerimaFile.name}</p>
-                 <p className="text-[10px] text-gray-500">Klik untuk ganti</p>
-               </div>
-             ) : (
-               <div className="text-center">
-                 <IoCloudUploadOutline className="w-8 h-8 mx-auto" />
-                 <p className="mt-2 font-semibold text-sm">Upload File</p>
-                 <p className="text-[10px] text-gray-500 mt-1">PDF, Max 2MB</p>
-               </div>
-             )}
+            <input
+              type="file"
+              accept=".pdf"
+              className="hidden"
+              onChange={(e) => handleFileChange(e, "tandaTerimaFile")}
+            />
+            {formData.tandaTerimaFile ? (
+              <div className="text-center text-green-600">
+                <IoDocumentAttachOutline className="w-8 h-8 mx-auto mb-1" />
+                <p className="text-xs font-bold break-all line-clamp-2">
+                  {formData.tandaTerimaFile.name}
+                </p>
+                <p className="text-[10px] text-gray-500">Klik untuk ganti</p>
+              </div>
+            ) : (
+              <div className="text-center">
+                <IoCloudUploadOutline className="w-8 h-8 mx-auto" />
+                <p className="mt-2 font-semibold text-sm">Upload File</p>
+                <p className="text-[10px] text-gray-500 mt-1">PDF, Max 2MB</p>
+              </div>
+            )}
           </label>
         </div>
       </div>
 
       <div className="flex justify-end gap-4">
-        <button type="button" onClick={onClose} className="px-6 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors">
+        <button
+          type="button"
+          onClick={onClose}
+          className="px-6 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors"
+        >
           Batal
         </button>
-        <button type="submit" className="px-6 py-2 rounded-lg bg-gray-700 text-white font-semibold hover:bg-gray-800 transition-colors">
+        <button
+          type="submit"
+          className="px-6 py-2 rounded-lg bg-gray-700 text-white font-semibold hover:bg-gray-800 transition-colors"
+        >
           Simpan
         </button>
       </div>

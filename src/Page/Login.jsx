@@ -1,5 +1,3 @@
-// src/Page/Login.jsx
-
 import backgroundImage from "../assets/background.jpg";
 import logoptpn4 from "../assets/logoptpn4.png";
 import { useState } from "react";
@@ -11,30 +9,47 @@ function Login({ onLoginSuccess }) {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
+  const DUMMY_USERS = [
+    { username: "adminndrone", password: "1234", role: "admin_drone" },
+    { username: "adminit", password: "1234", role: "admin_it" },
+    { username: "bosbesar", password: "4321", role: "superadmin" },
+  ];
+
   const handleLogin = (e) => {
     e.preventDefault();
-    console.log("Login clicked", { username, password });
+    const foundUser = DUMMY_USERS.find(
+      (user) => user.username === username && user.password === password
+    );
 
-    // Toast notification di pojok kanan bawah
-    toast.success("Berhasil Login! Selamat datang kembali!", {
-      position: "bottom-right",
-      autoClose: 2000,
-      hideProgressBar: false,
-      closeOnClick: true,
-      pauseOnHover: true,
-      draggable: true,
-      theme: "light",
-    });
+    if (foundUser) {
+      sessionStorage.setItem("userRole", foundUser.role);
+      localStorage.setItem("username", foundUser.username);
 
-    // Delay sedikit sebelum pindah halaman
-    setTimeout(() => {
-      onLoginSuccess();
-    }, 0);
+      toast.success(`Login Berhasil! Halo ${foundUser.username}`, {
+        position: "bottom-right",
+        autoClose: 2000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "light",
+      });
+
+      setTimeout(() => {
+        onLoginSuccess();
+      }, 500);
+    } else {
+      toast.error("Login gagal! Periksa username dan password Anda.", {
+        position: "bottom-right",
+        autoClose: 2000,
+        theme: "colored",
+      });
+    }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-      {/* 🎥 Background <img> */}
+      {/* Background */}
       <div className="absolute inset-0 z-0 overflow-hidden">
         <img
           src={backgroundImage}
@@ -44,23 +59,14 @@ function Login({ onLoginSuccess }) {
         <div className="absolute inset-0 bg-black/40"></div>
       </div>
 
-      {/* LoginForm */}
       <div className="relative z-10 w-full max-w-xl mx-4 animate-[fadeInUp_0.6s_ease-out]">
-        
-        {/* EFEK HOVER (MEMBESAR) */}
-        <div 
-          className="bg-white/10 backdrop-blur-md rounded-3xl p-12 border border-white/30 shadow-[0_0_30px_rgba(0,0,0,0.3)]
-                     transition-all duration-300 ease-in-out
-                     hover:scale-105"
-        >
-          
-          {/* Logo */}
+        <div className="bg-white/10 backdrop-blur-md rounded-3xl p-12 border border-white/30 shadow-[0_0_30px_rgba(0,0,0,0.3)] transition-all duration-300 ease-in-out hover:scale-105">
           <div className="flex justify-center mb-6">
             <img src={logoptpn4} alt="Logo PTPN" className="h-20 w-auto" />
           </div>
 
           <form onSubmit={handleLogin} className="space-y-8">
-            {/* Username Input */}
+            {/* Input Username */}
             <div>
               <div className="relative">
                 <span className="absolute left-5 top-1/2 -translate-y-1/2 text-white/70">
@@ -83,17 +89,12 @@ function Login({ onLoginSuccess }) {
                   placeholder="Username"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="w-full bg-white/20 border border-white/30 rounded-xl px-14 py-4 
-                             text-white text-lg placeholder-white/80 
-                             focus:outline-none focus:border-white/60 focus:bg-white/25 
-                             focus:shadow-[0_0_15px_rgba(255,255,255,0.3)]
-                             hover:shadow-[0_0_10px_rgba(255,255,255,0.2)]
-                             transition-all duration-300"
+                  className="w-full bg-white/20 border border-white/30 rounded-xl px-14 py-4 text-white text-lg placeholder-white/80 focus:outline-none focus:border-white/60 focus:bg-white/25 focus:shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:shadow-[0_0_10px_rgba(255,255,255,0.2)] transition-all duration-300"
                 />
               </div>
             </div>
 
-            {/* Password Input */}
+            {/* Input Password */}
             <div>
               <div className="relative">
                 <span className="absolute left-5 top-1/2 -translate-y-1/2 text-white/70">
@@ -116,12 +117,7 @@ function Login({ onLoginSuccess }) {
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="w-full bg-white/20 border border-white/30 rounded-xl px-14 py-4 
-                             text-white text-lg placeholder-white/80 
-                             focus:outline-none focus:border-white/60 focus:bg-white/25 
-                             focus:shadow-[0_0_15px_rgba(255,255,255,0.3)]
-                             hover:shadow-[0_0_10px_rgba(255,255,255,0.2)]
-                             transition-all duration-300"
+                  className="w-full bg-white/20 border border-white/30 rounded-xl px-14 py-4 text-white text-lg placeholder-white/80 focus:outline-none focus:border-white/60 focus:bg-white/25 focus:shadow-[0_0_15px_rgba(255,255,255,0.3)] hover:shadow-[0_0_10px_rgba(255,255,255,0.2)] transition-all duration-300"
                 />
                 <button
                   type="button"
@@ -167,26 +163,14 @@ function Login({ onLoginSuccess }) {
               </div>
             </div>
 
-            {/* Login Button */}
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 
-                         text-white font-bold text-lg py-4 rounded-xl 
-                         transition-all duration-300 
-                         shadow-lg shadow-blue-500/50
-                         hover:shadow-2xl hover:shadow-blue-600/60
-                         hover:scale-105 active:scale-95
-                         border border-blue-400/30
-                         relative overflow-hidden group"
+              className="w-full bg-gradient-to-r from-blue-600 via-blue-500 to-blue-400 text-white font-bold text-lg py-4 rounded-xl transition-all duration-300 shadow-lg shadow-blue-500/50 hover:shadow-2xl hover:shadow-blue-600/60 hover:scale-105 active:scale-95 border border-blue-400/30 relative overflow-hidden group"
             >
-              {/* Shimmer Effect */}
               <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/30 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-              
-              {/* Text */}
               <span className="relative z-10">Login</span>
             </button>
 
-            {/* Forgot Password */}
             <p className="text-center text-white/70 text-sm mt-4 hover:text-white hover:underline cursor-pointer transition-colors duration-300">
               Forgot Password?
             </p>
