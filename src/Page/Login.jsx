@@ -27,7 +27,7 @@ function Login({ onLoginSuccess }) {
 
       toast.success(`Login Berhasil! Halo ${foundUser.username}`, {
         position: "bottom-right",
-        autoClose: 2000,
+        autoClose: 1500,
         hideProgressBar: false,
         closeOnClick: true,
         pauseOnHover: true,

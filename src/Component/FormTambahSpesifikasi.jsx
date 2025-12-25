@@ -1,5 +1,3 @@
-// src/Component/FormTambahSpesifikasi.jsx
-
 import React, { useState, useEffect } from "react";
 import {
   IoClose,
@@ -15,15 +13,14 @@ export default function FormTambahSpesifikasi({ onClose, onSimpan }) {
     idBarang: "",
     spesifikasi: "",
     jumlah: "",
-    hargaSatuan: "", // Simpan angka murni di sini
-    hargaSatuanDisplay: "", // Untuk tampilan Rp
+    hargaSatuan: "",
+    hargaSatuanDisplay: "",
     totalHarga: "",
     kondisi: "bagus",
     gambar: null,
     kwitansi: null,
   });
 
-  // Helper Format Rupiah
   const formatRupiah = (angka) => {
     if (!angka) return "";
     return new Intl.NumberFormat("id-ID", {
@@ -33,12 +30,11 @@ export default function FormTambahSpesifikasi({ onClose, onSimpan }) {
     }).format(angka);
   };
 
-  // Helper Parsing Rupiah ke Angka Murni
   const parseRupiah = (rupiahString) => {
     return parseInt(rupiahString.replace(/[^0-9]/g, ""), 10) || 0;
   };
 
-  // Efek Samping: Hitung Total Harga Otomatis
+
   useEffect(() => {
     const qty = parseInt(formData.jumlah) || 0;
     const price = parseInt(formData.hargaSatuan) || 0;
@@ -54,9 +50,7 @@ export default function FormTambahSpesifikasi({ onClose, onSimpan }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Logika Khusus untuk Jumlah Barang (Bilangan Asli > 0)
     if (name === "jumlah") {
-      // Hanya izinkan angka, tidak boleh 0 atau negatif di awal
       if (value === "0" || value.includes("-")) return;
 
       setFormData((prev) => ({ ...prev, [name]: value }));
@@ -65,7 +59,6 @@ export default function FormTambahSpesifikasi({ onClose, onSimpan }) {
     }
   };
 
-  // Handler Khusus Harga (Format Rupiah saat mengetik)
   const handleHargaChange = (e) => {
     const rawValue = e.target.value;
     const numericValue = parseRupiah(rawValue);

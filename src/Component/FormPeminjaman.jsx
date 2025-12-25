@@ -8,7 +8,6 @@ import {
 } from "react-icons/io5";
 
 function FormPeminjaman({ onClose, onSimpan }) {
-  // State untuk menampung data form
   const [formData, setFormData] = useState({
     tanggal: "",
     idBarang: "",
@@ -19,20 +18,17 @@ function FormPeminjaman({ onClose, onSimpan }) {
     tandaTerimaFile: null,
   });
 
-  // Handle Perubahan Text Input
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle Input File (Validasi Max 2MB)
   const handleFileChange = (e, fieldName) => {
     const file = e.target.files[0];
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
-        // 2MB dalam bytes
         Swal.fire("Gagal", "Ukuran file maksimal 2MB!", "error");
-        e.target.value = null; // Reset input
+        e.target.value = null;
         return;
       }
       setFormData((prev) => ({ ...prev, [fieldName]: file }));
@@ -42,7 +38,6 @@ function FormPeminjaman({ onClose, onSimpan }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validasi Jumlah Barang (Harus Bilangan Asli > 0)
     const jumlahInt = parseInt(formData.jumlah);
     if (!jumlahInt || jumlahInt < 1) {
       Swal.fire(
@@ -53,13 +48,12 @@ function FormPeminjaman({ onClose, onSimpan }) {
       return;
     }
 
-    // Format Tanggal untuk Tampilan (yyyy-mm-dd -> dd/mm/yyyy)
+
     const [y, m, d] = formData.tanggal.split("-");
     const formattedDate = `${d}/${m}/${y}`;
 
-    // Siapkan Objek Data Baru
     const newData = {
-      id: formData.idBarang, // Gunakan ID dari input
+      id: formData.idBarang,
       tanggal: formattedDate,
       spesifikasi: formData.spesifikasi,
       jumlah: jumlahInt,
@@ -68,7 +62,6 @@ function FormPeminjaman({ onClose, onSimpan }) {
       tandaTerimaFile: formData.tandaTerimaFile,
     };
 
-    // Kirim data ke Parent (Peminjaman.jsx)
     onSimpan(newData);
   };
 
@@ -91,14 +84,14 @@ function FormPeminjaman({ onClose, onSimpan }) {
           Tanggal Peminjaman
         </label>
         <input
-          type="date" // Langsung pakai type="date" agar native picker browser muncul konsisten
+          type="date"
           name="tanggal"
           value={formData.tanggal}
           onChange={handleChange}
           className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700"
           required
         />
-        {/* Ikon hiasan (pointer-events-none agar klik tembus ke input date) */}
+
         <IoCalendarOutline className="absolute right-4 top-10 w-5 h-5 text-gray-400 pointer-events-none" />
       </div>
 
@@ -142,7 +135,7 @@ function FormPeminjaman({ onClose, onSimpan }) {
         <input
           type="number"
           name="jumlah"
-          min="1" // HTML5 validation
+          min="1"
           value={formData.jumlah}
           onChange={handleChange}
           placeholder="Masukkan Jumlah Barang (contoh: 1, 5, 10)"
@@ -167,7 +160,7 @@ function FormPeminjaman({ onClose, onSimpan }) {
         />
       </div>
 
-      {/* File Uploads (2 Kolom) */}
+      {/* File Uploads */}
       <div className="grid grid-cols-2 gap-6 mb-8">
         {/* Surat Peminjaman */}
         <div>

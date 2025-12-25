@@ -1,9 +1,6 @@
-// src/Component/Pengembalian.jsx
-
 import React, { useState, useContext, useEffect } from "react";
 import { AppContext } from "../Context/AppContext";
 import Swal from "sweetalert2";
-
 import {
   IoSearchOutline,
   IoCalendarOutline,
@@ -16,7 +13,6 @@ import {
   IoChevronForward,
   IoDocumentTextOutline,
 } from "react-icons/io5";
-
 import Modal from "./common/Modal";
 import FormPengembalian from "./FormPengembalian.jsx";
 
@@ -87,7 +83,7 @@ export default function Pengembalian() {
     return `${d}/${m}/${y}`;
   }
 
-  // --- FUNGSI SIMPAN DATA DARI FORM ---
+  // HANDLE SIMPAN DATA
   const handleSimpanData = (newData) => {
     setData((prev) => [newData, ...prev]);
     Swal.fire({
@@ -166,7 +162,6 @@ export default function Pengembalian() {
 
       <section>
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-          {/* SEARCH & FILTER (Sama seperti sebelumnya) */}
           <div className="flex items-center gap-3 w-full md:w-auto">
             <div className="relative">
               <input

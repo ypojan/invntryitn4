@@ -23,14 +23,13 @@ export default function DetailBarang() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  // Menggunakan state lokal agar bisa dimanipulasi (tambah/hapus) tanpa reload
   const [localData, setLocalData] = useState(detailBarangData);
 
   // --- PAGINATION STATE ---
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // Filter Data
+  // --- LOGIKA FILTER DATA ---
   const filteredData = localData.filter(
     (item) =>
       item.kategori === selectedCategory &&
@@ -121,9 +120,7 @@ export default function DetailBarang() {
       },
     };
 
-    // PERUBAHAN DI SINI:
-    // newItem ditaruh di depan array ([newItem, ...prev])
-    // agar data baru muncul di baris paling atas tabel.
+
     setLocalData((prev) => [newItem, ...prev]);
   };
 

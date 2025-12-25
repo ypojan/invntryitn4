@@ -358,7 +358,6 @@ export default function Peminjaman() {
         </div>
       </section>
 
-      {/* MODAL dengan Props onSimpan */}
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -366,7 +365,7 @@ export default function Peminjaman() {
       >
         <FormPeminjaman
           onClose={() => setIsModalOpen(false)}
-          onSimpan={handleSimpanData} // Kirim fungsi simpan ke anak
+          onSimpan={handleSimpanData}
         />
       </Modal>
     </>

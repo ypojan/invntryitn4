@@ -38,10 +38,17 @@ function Header() {
       title: "Yakin ingin logout?",
       icon: "question",
       showCancelButton: true,
-      confirmButtonText: "Ya, Logout",
+      confirmButtonText: "Ya",
       cancelButtonText: "Batal",
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
+       customClass: {
+        popup: "rounded-2xl p-6",
+        confirmButton:
+          "bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors mx-2",
+        cancelButton:
+          "bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors mx-2",
+      },
     }).then((result) => {
       if (result.isConfirmed) {
         sessionStorage.removeItem("userRole"); 
@@ -104,7 +111,7 @@ function Header() {
               </div>
 
               <div className="p-2">
-                {/* Opsi 1: Edit Profile */}
+                {/* Edit Profile */}
                 <button 
                   onClick={handleEditProfile}
                   className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors"
@@ -115,7 +122,7 @@ function Header() {
 
                 <div className="h-px bg-gray-100 my-1"></div>
 
-                {/* Opsi 3: Logout */}
+                {/* Logout */}
                 <button 
                   onClick={handleLogout}
                   className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-red-600 hover:bg-red-50 hover:text-red-700 rounded-lg transition-colors font-medium"
