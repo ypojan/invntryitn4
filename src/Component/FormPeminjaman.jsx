@@ -48,7 +48,6 @@ function FormPeminjaman({ onClose, onSimpan }) {
       return;
     }
 
-
     const [y, m, d] = formData.tanggal.split("-");
     const formattedDate = `${d}/${m}/${y}`;
 
@@ -66,9 +65,10 @@ function FormPeminjaman({ onClose, onSimpan }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ width: "550px" }}>
+    // HAPUS style={{ width: 550px }} dan gunakan class responsive
+    <form onSubmit={handleSubmit} className="w-full md:min-w-[500px]">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Peminjaman Barang</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-gray-800">Peminjaman Barang</h2>
         <button
           type="button"
           onClick={onClose}
@@ -78,162 +78,164 @@ function FormPeminjaman({ onClose, onSimpan }) {
         </button>
       </div>
 
-      {/* Tanggal */}
-      <div className="mb-4 relative">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Tanggal Peminjaman
-        </label>
-        <input
-          type="date"
-          name="tanggal"
-          value={formData.tanggal}
-          onChange={handleChange}
-          className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700"
-          required
-        />
-
-        <IoCalendarOutline className="absolute right-4 top-10 w-5 h-5 text-gray-400 pointer-events-none" />
-      </div>
-
-      {/* ID Barang */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          ID Barang
-        </label>
-        <input
-          type="text"
-          name="idBarang"
-          value={formData.idBarang}
-          onChange={handleChange}
-          placeholder="Masukkan ID Barang"
-          className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          required
-        />
-      </div>
-
-      {/* Spesifikasi */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Spesifikasi
-        </label>
-        <input
-          type="text"
-          name="spesifikasi"
-          value={formData.spesifikasi}
-          onChange={handleChange}
-          placeholder="Masukkan Spesifikasi Barang"
-          className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          required
-        />
-      </div>
-
-      {/* Jumlah Barang */}
-      <div className="mb-4">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Jumlah Barang
-        </label>
-        <input
-          type="number"
-          name="jumlah"
-          min="1"
-          value={formData.jumlah}
-          onChange={handleChange}
-          placeholder="Masukkan Jumlah Barang (contoh: 1, 5, 10)"
-          className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          required
-        />
-      </div>
-
-      {/* Unit/Bagian */}
-      <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">
-          Unit/Bagian
-        </label>
-        <input
-          type="text"
-          name="unit"
-          value={formData.unit}
-          onChange={handleChange}
-          placeholder="Masukkan Unit/Bagian"
-          className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
-          required
-        />
-      </div>
-
-      {/* File Uploads */}
-      <div className="grid grid-cols-2 gap-6 mb-8">
-        {/* Surat Peminjaman */}
-        <div>
+      {/* CONTAINER SCROLL UNTUK MOBILE */}
+      <div className="max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
+        {/* Tanggal */}
+        <div className="mb-4 relative">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Surat Peminjaman
+            Tanggal Peminjaman
           </label>
-          <label className="w-full flex flex-col justify-center items-center px-4 py-6 rounded-lg bg-blue-50 border-2 border-dashed border-blue-200 text-blue-500 hover:bg-blue-100 cursor-pointer transition-colors h-32 relative">
-            <input
-              type="file"
-              accept=".pdf"
-              className="hidden"
-              onChange={(e) => handleFileChange(e, "suratFile")}
-            />
-            {formData.suratFile ? (
-              <div className="text-center text-green-600">
-                <IoDocumentAttachOutline className="w-8 h-8 mx-auto mb-1" />
-                <p className="text-xs font-bold break-all line-clamp-2">
-                  {formData.suratFile.name}
-                </p>
-                <p className="text-[10px] text-gray-500">Klik untuk ganti</p>
-              </div>
-            ) : (
-              <div className="text-center">
-                <IoCloudUploadOutline className="w-8 h-8 mx-auto" />
-                <p className="mt-2 font-semibold text-sm">Upload File</p>
-                <p className="text-[10px] text-gray-500 mt-1">PDF, Max 2MB</p>
-              </div>
-            )}
-          </label>
+          <input
+            type="date"
+            name="tanggal"
+            value={formData.tanggal}
+            onChange={handleChange}
+            className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700"
+            required
+          />
+          <IoCalendarOutline className="absolute right-4 top-10 w-5 h-5 text-gray-400 pointer-events-none" />
         </div>
 
-        {/* Tanda Terima */}
-        <div>
+        {/* ID Barang */}
+        <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
-            Tanda Terima
+            ID Barang
           </label>
-          <label className="w-full flex flex-col justify-center items-center px-4 py-6 rounded-lg bg-blue-50 border-2 border-dashed border-blue-200 text-blue-500 hover:bg-blue-100 cursor-pointer transition-colors h-32 relative">
-            <input
-              type="file"
-              accept=".pdf"
-              className="hidden"
-              onChange={(e) => handleFileChange(e, "tandaTerimaFile")}
-            />
-            {formData.tandaTerimaFile ? (
-              <div className="text-center text-green-600">
-                <IoDocumentAttachOutline className="w-8 h-8 mx-auto mb-1" />
-                <p className="text-xs font-bold break-all line-clamp-2">
-                  {formData.tandaTerimaFile.name}
-                </p>
-                <p className="text-[10px] text-gray-500">Klik untuk ganti</p>
-              </div>
-            ) : (
-              <div className="text-center">
-                <IoCloudUploadOutline className="w-8 h-8 mx-auto" />
-                <p className="mt-2 font-semibold text-sm">Upload File</p>
-                <p className="text-[10px] text-gray-500 mt-1">PDF, Max 2MB</p>
-              </div>
-            )}
+          <input
+            type="text"
+            name="idBarang"
+            value={formData.idBarang}
+            onChange={handleChange}
+            placeholder="Masukkan ID Barang"
+            className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+        </div>
+
+        {/* Spesifikasi */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Spesifikasi
           </label>
+          <input
+            type="text"
+            name="spesifikasi"
+            value={formData.spesifikasi}
+            onChange={handleChange}
+            placeholder="Masukkan Spesifikasi Barang"
+            className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+        </div>
+
+        {/* Jumlah Barang */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Jumlah Barang
+          </label>
+          <input
+            type="number"
+            name="jumlah"
+            min="1"
+            value={formData.jumlah}
+            onChange={handleChange}
+            placeholder="Contoh: 1, 5"
+            className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+        </div>
+
+        {/* Unit/Bagian */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Unit/Bagian
+          </label>
+          <input
+            type="text"
+            name="unit"
+            value={formData.unit}
+            onChange={handleChange}
+            placeholder="Masukkan Unit/Bagian"
+            className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+        </div>
+
+        {/* File Uploads (Responsive Grid) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-8">
+          {/* Surat Peminjaman */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Surat Peminjaman
+            </label>
+            <label className="w-full flex flex-col justify-center items-center px-4 py-6 rounded-lg bg-blue-50 border-2 border-dashed border-blue-200 text-blue-500 hover:bg-blue-100 cursor-pointer transition-colors h-32 relative">
+              <input
+                type="file"
+                accept=".pdf"
+                className="hidden"
+                onChange={(e) => handleFileChange(e, "suratFile")}
+              />
+              {formData.suratFile ? (
+                <div className="text-center text-green-600">
+                  <IoDocumentAttachOutline className="w-8 h-8 mx-auto mb-1" />
+                  <p className="text-xs font-bold break-all line-clamp-2">
+                    {formData.suratFile.name}
+                  </p>
+                  <p className="text-[10px] text-gray-500">Klik untuk ganti</p>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <IoCloudUploadOutline className="w-8 h-8 mx-auto" />
+                  <p className="mt-2 font-semibold text-sm">Upload File</p>
+                  <p className="text-[10px] text-gray-500 mt-1">PDF, Max 2MB</p>
+                </div>
+              )}
+            </label>
+          </div>
+
+          {/* Tanda Terima */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Tanda Terima
+            </label>
+            <label className="w-full flex flex-col justify-center items-center px-4 py-6 rounded-lg bg-blue-50 border-2 border-dashed border-blue-200 text-blue-500 hover:bg-blue-100 cursor-pointer transition-colors h-32 relative">
+              <input
+                type="file"
+                accept=".pdf"
+                className="hidden"
+                onChange={(e) => handleFileChange(e, "tandaTerimaFile")}
+              />
+              {formData.tandaTerimaFile ? (
+                <div className="text-center text-green-600">
+                  <IoDocumentAttachOutline className="w-8 h-8 mx-auto mb-1" />
+                  <p className="text-xs font-bold break-all line-clamp-2">
+                    {formData.tandaTerimaFile.name}
+                  </p>
+                  <p className="text-[10px] text-gray-500">Klik untuk ganti</p>
+                </div>
+              ) : (
+                <div className="text-center">
+                  <IoCloudUploadOutline className="w-8 h-8 mx-auto" />
+                  <p className="mt-2 font-semibold text-sm">Upload File</p>
+                  <p className="text-[10px] text-gray-500 mt-1">PDF, Max 2MB</p>
+                </div>
+              )}
+            </label>
+          </div>
         </div>
       </div>
 
-      <div className="flex justify-end gap-4">
+      <div className="flex justify-end gap-4 mt-4 pt-4 border-t border-gray-100">
         <button
           type="button"
           onClick={onClose}
-          className="px-6 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors"
+          className="px-4 py-2 text-sm md:text-base md:px-6 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors"
         >
           Batal
         </button>
         <button
           type="submit"
-          className="px-6 py-2 rounded-lg bg-gray-700 text-white font-semibold hover:bg-gray-800 transition-colors"
+          className="px-4 py-2 text-sm md:text-base md:px-6 rounded-lg bg-gray-700 text-white font-semibold hover:bg-gray-800 transition-colors"
         >
           Simpan
         </button>

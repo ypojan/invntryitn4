@@ -53,10 +53,11 @@ function FormTambahBarang({ onClose }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-2">
+    // Responsive Container
+    <form onSubmit={handleSubmit} className="w-full md:min-w-[450px] p-2">
       {/* HEADER */}
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Tambah Data Barang</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-gray-800">Tambah Data Barang</h2>
         <button
           type="button"
           onClick={onClose}
@@ -89,7 +90,7 @@ function FormTambahBarang({ onClose }) {
         </label>
 
         <label
-          className={`w-full flex justify-center items-center px-6 py-10 rounded-lg border-2 border-dashed cursor-pointer transition-colors h-40 relative
+          className={`w-full flex justify-center items-center px-4 md:px-6 py-8 md:py-10 rounded-lg border-2 border-dashed cursor-pointer transition-colors h-40 relative
           ${
             gambar
               ? "bg-green-50 border-green-300"
@@ -105,11 +106,11 @@ function FormTambahBarang({ onClose }) {
 
           {gambar ? (
             <div className="text-center text-green-600 animate-in fade-in zoom-in duration-300">
-              <IoDocumentAttachOutline className="w-12 h-12 mx-auto mb-2" />
-              <p className="text-sm font-bold break-all line-clamp-2 px-2">
+              <IoDocumentAttachOutline className="w-10 h-10 md:w-12 md:h-12 mx-auto mb-2" />
+              <p className="text-xs md:text-sm font-bold break-all line-clamp-2 px-2">
                 {gambar.name}
               </p>
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-[10px] md:text-xs text-gray-500 mt-1">
                 Klik untuk ganti gambar
               </p>
             </div>
@@ -119,10 +120,10 @@ function FormTambahBarang({ onClose }) {
                 size={40}
                 className="mx-auto text-blue-500 mb-2"
               />
-              <p className="mt-2 font-semibold text-gray-600">
+              <p className="mt-2 font-semibold text-gray-600 text-sm md:text-base">
                 Klik untuk Upload Gambar
               </p>
-              <p className="text-xs text-gray-400 mt-1">
+              <p className="text-[10px] md:text-xs text-gray-400 mt-1">
                 Format JPG / PNG (Maks. 2MB)
               </p>
             </div>
@@ -130,7 +131,7 @@ function FormTambahBarang({ onClose }) {
         </label>
       </div>
 
-      <div className="flex justify-end gap-4">
+      <div className="flex justify-end gap-4 pt-4 border-t border-gray-100">
         <button
           type="button"
           onClick={onClose}

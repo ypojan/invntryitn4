@@ -13,14 +13,17 @@ import {
   IoDocumentTextOutline,
   IoChevronBack,
   IoChevronForward,
+  IoCalendarOutline, // Tambahan icon calendar
 } from "react-icons/io5";
 import Modal from "./common/Modal";
 import FormTambahSpesifikasi from "./FormTambahSpesifikasi.jsx";
 
 export default function DetailBarang() {
-  const { setRoute, selectedCategory, detailBarangData } =
-    useContext(AppContext);
+  const { setRoute, selectedCategory, detailBarangData } = useContext(AppContext);
+  
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDate, setSelectedDate] = useState(""); // Ganti nama biar jelas
+  const [dateInputType, setDateInputType] = useState("text"); // State untuk tipe input tanggal
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [localData, setLocalData] = useState(detailBarangData);
@@ -30,12 +33,21 @@ export default function DetailBarang() {
   const itemsPerPage = 5;
 
   // --- LOGIKA FILTER DATA ---
-  const filteredData = localData.filter(
-    (item) =>
-      item.kategori === selectedCategory &&
-      (item.spesifikasi.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.id.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredData = localData.filter((item) => {
+    // Filter by Category
+    if (item.kategori !== selectedCategory) return false;
+
+    // Filter by Search Term
+    const matchSearch = 
+      item.spesifikasi.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      item.id.toLowerCase().includes(searchTerm.toLowerCase());
+    
+    // Filter by Date (Asumsi format tanggal di data dd/mm/yyyy atau yyyy-mm-dd)
+    // Jika format data berbeda, sesuaikan logika ini
+    const matchDate = selectedDate ? item.tanggal.includes(selectedDate) : true;
+
+    return matchSearch && matchDate;
+  });
 
   // --- LOGIKA PAGINATION ---
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
@@ -54,7 +66,7 @@ export default function DetailBarang() {
   // Reset pagination ke halaman 1 jika filter berubah
   useEffect(() => {
     setCurrentPage(1);
-  }, [searchTerm, selectedCategory]);
+  }, [searchTerm, selectedCategory, selectedDate]);
 
   const formatRupiah = (number) => {
     return new Intl.NumberFormat("id-ID", {
@@ -63,6 +75,14 @@ export default function DetailBarang() {
       minimumFractionDigits: 0,
     }).format(number);
   };
+
+  // --- FUNGSI UTILS UNTUK DATE PICKER ---
+  function focusDatePicker() {
+    const el = document.getElementById("date-input-detail");
+    if (!el) return;
+    if (typeof el.showPicker === "function") el.showPicker();
+    else el.focus();
+  }
 
   // --- FUNGSI HAPUS ---
   const handleDelete = (id, nama) => {
@@ -75,9 +95,9 @@ export default function DetailBarang() {
       customClass: {
         popup: "rounded-2xl p-6",
         confirmButton:
-          "bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-colors mx-2",
+          "bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 mx-2",
         cancelButton:
-          "bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 transition-colors mx-2",
+          "bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 mx-2",
       },
       confirmButtonText: "Ya, Hapus",
       cancelButtonText: "Batal",
@@ -120,235 +140,251 @@ export default function DetailBarang() {
       },
     };
 
-
     setLocalData((prev) => [newItem, ...prev]);
+    setIsModalOpen(false); // Tutup modal setelah simpan
+    Swal.fire("Berhasil", "Data berhasil ditambahkan", "success");
   };
 
   return (
-    <div className="bg-gray-100 min-h-screen">
+    <>
       {/* HEADER PAGE */}
-      <header className="flex items-center gap-4 mb-8">
+      <header className="mb-6 flex items-center gap-4">
         <button
           onClick={() => setRoute("dashboard")}
           className="p-2 rounded-full hover:bg-gray-200 transition-colors"
           title="Kembali ke Dashboard"
         >
-          <IoArrowBack className="w-8 h-8 text-slate-800" />
+          <IoArrowBack className="w-6 h-6 text-gray-700" />
         </button>
-        <div>
-          <h1 className="text-3xl font-bold text-slate-800">
-            Detail Spesifikasi {selectedCategory}
-          </h1>
-        </div>
+        <h1 className="text-3xl font-bold text-gray-900 py-2">
+           Detail Spesifikasi {selectedCategory}
+        </h1>
       </header>
 
-      {/* FILTER & ACTION BAR */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Pilih Tanggal"
-              className="pl-4 pr-10 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-40 text-sm shadow-sm"
-              onFocus={(e) => (e.target.type = "date")}
-              onBlur={(e) => (e.target.type = "text")}
-            />
-          </div>
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Cari Spesifikasi..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-4 pr-10 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 w-64 text-sm shadow-sm"
-            />
-            <IoSearchOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          </div>
-        </div>
+      <section>
+        {/* FILTER & ACTION BAR */}
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
+          <div className="flex items-center gap-3 w-full md:w-auto">
+            {/* Input Tanggal Style Peminjaman */}
+            <div className="relative">
+              <input
+                id="date-input-detail"
+                type={dateInputType}
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                placeholder="dd/mm/yyyy"
+                onFocus={() => setDateInputType("date")}
+                onBlur={() => {
+                  if (!selectedDate) setDateInputType("text");
+                }}
+                className="w-48 appearance-none px-3 py-2 rounded-lg border border-gray-300 bg-white text-sm pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+              />
+              <button
+                type="button"
+                onClick={focusDatePicker}
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded hover:bg-gray-100"
+              >
+                <IoCalendarOutline className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
 
-        <div className="flex gap-3 w-full md:w-auto">
-          {/* TOMBOL CETAK LAPORAN */}
-          <button
-            onClick={() => Swal.fire("Info", "Fitur Cetak Coming Soon", "info")}
-            className="w-1/2 md:w-auto px-6 py-2 rounded-lg flex items-center justify-center gap-2 
+            {/* Search Input */}
+            <div className="relative flex-1 md:flex-none">
+              <input
+                type="text"
+                placeholder="Cari Spesifikasi..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm"
+              />
+              <IoSearchOutline className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
+            </div>
+          </div>
+
+          <div className="flex gap-3 w-full md:w-auto">
+            {/* TOMBOL CETAK LAPORAN */}
+            <button
+              onClick={() => Swal.fire("Info", "Fitur Cetak Coming Soon", "info")}
+              className="w-1/2 md:w-auto px-6 py-3 rounded-lg flex items-center justify-center gap-2 
                        bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold 
                        shadow-md shadow-blue-200 hover:from-blue-700 hover:to-blue-800 
                        hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 active:scale-95 
                        relative overflow-hidden group"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>
-            <IoPrintOutline className="w-5 h-5 relative z-10" />
-            <span className="relative z-10 text-sm">Cetak Laporan</span>
-          </button>
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>
+              <IoPrintOutline className="w-5 h-5 relative z-10" />
+              <span className="relative z-10 text-sm">Cetak Laporan</span>
+            </button>
 
-          {/* TOMBOL TAMBAH SPESIFIKASI */}
-          <button
-            onClick={() => setIsModalOpen(true)}
-            className="w-1/2 md:w-auto px-6 py-2 rounded-lg flex items-center justify-center gap-2 
+            {/* TOMBOL TAMBAH SPESIFIKASI */}
+            <button
+              onClick={() => setIsModalOpen(true)}
+              className="w-1/2 md:w-auto px-6 py-3 rounded-lg flex items-center justify-center gap-2 
                        bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold 
                        shadow-md shadow-blue-200 hover:from-blue-700 hover:to-blue-800 
                        hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 active:scale-95 
                        relative overflow-hidden group"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>
-            <IoAdd className="w-5 h-5 relative z-10" />
-            <span className="relative z-10 text-sm">Tambah Spesifikasi</span>
-          </button>
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>
+              <IoAdd className="w-5 h-5 relative z-10" />
+              <span className="relative z-10 text-sm">Tambah Spesifikasi</span>
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* TABEL DATA */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 flex flex-col">
-        <div className="overflow-x-auto w-full">
-          <table className="min-w-full text-sm whitespace-nowrap">
-            <thead className="bg-slate-700 text-white uppercase tracking-wider">
-              <tr>
-                <th className="px-4 py-4 text-center font-semibold">
-                  Tanggal Pembelian
-                </th>
-                <th className="px-4 py-4 text-center font-semibold">
-                  ID Barang
-                </th>
-                <th className="px-4 py-4 text-left font-semibold">
-                  Spesifikasi
-                </th>
-                <th className="px-4 py-4 text-center font-semibold">Gambar</th>
-                <th className="px-4 py-4 text-center font-semibold">Jumlah</th>
-                <th className="px-4 py-4 text-center font-semibold">
-                  Harga Satuan
-                </th>
-                <th className="px-4 py-4 text-center font-semibold">
-                  Total Harga
-                </th>
-                <th className="px-4 py-4 text-center font-semibold">
-                  Kwitansi
-                </th>
-                <th className="px-4 py-4 text-center font-semibold bg-blue-600 text-white">
-                  Bagus
-                </th>
-                <th className="px-4 py-4 text-center font-semibold bg-yellow-600 text-white">
-                  Diperbaiki
-                </th>
-                <th className="px-4 py-4 text-center font-semibold bg-red-600 text-white">
-                  Rusak
-                </th>
-                <th className="px-4 py-4 text-center font-semibold">Aksi</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {currentItems.length > 0 ? (
-                currentItems.map((item, index) => (
-                  <tr
-                    key={index}
-                    className="hover:bg-blue-50 transition-colors"
-                  >
-                    <td className="px-4 py-3 text-center text-gray-600 font-medium">
-                      {item.tanggal}
-                    </td>
-                    <td className="px-4 py-3 text-center text-gray-600">
-                      {item.id}
-                    </td>
-                    <td className="px-4 py-3 font-semibold text-gray-800 min-w-[200px] whitespace-normal">
-                      {item.spesifikasi}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <div className="w-12 h-10 mx-auto bg-white border border-gray-200 rounded flex items-center justify-center p-1 overflow-hidden">
-                        {item.gambar ? (
-                          <img
-                            src={item.gambar}
-                            alt="img"
-                            className="w-full h-full object-contain"
-                          />
-                        ) : (
-                          <span className="text-xs text-gray-400">-</span>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-center font-bold text-gray-700">
-                      {item.jumlah}
-                    </td>
-                    <td className="px-4 py-3 text-center text-gray-600">
-                      {formatRupiah(item.hargaSatuan)}
-                    </td>
-                    <td className="px-4 py-3 text-center font-bold text-gray-800">
-                      {formatRupiah(item.totalHarga)}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
-                        Lihat Detail
-                      </button>
-                    </td>
-                    <td className="px-4 py-3 text-center font-bold text-blue-600 bg-blue-50/30">
-                      {item.kondisi.bagus}
-                    </td>
-                    <td className="px-4 py-3 text-center font-bold text-yellow-600 bg-yellow-50/30">
-                      {item.kondisi.diperbaiki}
-                    </td>
-                    <td className="px-4 py-3 text-center font-bold text-red-600 bg-red-50/30">
-                      {item.kondisi.rusak}
-                    </td>
-                    <td className="px-4 py-3 text-center">
-                      <div className="flex justify-center gap-2">
-                        <button
-                          className="text-blue-600 hover:text-blue-800 transition-colors"
-                          title="Edit"
-                        >
-                          <IoPencil size={18} />
+        {/* TABEL DATA */}
+        <div className="bg-white rounded-lg shadow border border-gray-200 flex flex-col">
+          <div className="overflow-x-auto w-full">
+            <table className="min-w-full text-sm whitespace-nowrap">
+              <thead className="bg-slate-700 text-white uppercase">
+                <tr>
+                  <th className="px-6 py-4 text-center font-semibold">
+                    Tanggal
+                  </th>
+                  <th className="px-6 py-4 text-center font-semibold">
+                    ID Barang
+                  </th>
+                  <th className="px-6 py-4 text-left font-semibold">
+                    Spesifikasi
+                  </th>
+                  <th className="px-6 py-4 text-center font-semibold">Gambar</th>
+                  <th className="px-6 py-4 text-center font-semibold">Jumlah</th>
+                  <th className="px-6 py-4 text-center font-semibold">
+                    Harga Satuan
+                  </th>
+                  <th className="px-6 py-4 text-center font-semibold">
+                    Total Harga
+                  </th>
+                  <th className="px-6 py-4 text-center font-semibold">
+                    Kwitansi
+                  </th>
+                  <th className="px-6 py-4 text-center font-semibold bg-blue-600 text-white">
+                    Bagus
+                  </th>
+                  <th className="px-6 py-4 text-center font-semibold bg-yellow-600 text-white">
+                    Diperbaiki
+                  </th>
+                  <th className="px-6 py-4 text-center font-semibold bg-red-600 text-white">
+                    Rusak
+                  </th>
+                  <th className="px-6 py-4 text-center font-semibold">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 text-gray-800">
+                {currentItems.length > 0 ? (
+                  currentItems.map((item, index) => (
+                    <tr
+                      key={index}
+                      className="hover:bg-blue-50 transition-colors"
+                    >
+                      <td className="px-6 py-4 text-center font-medium">
+                        {item.tanggal}
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        {item.id}
+                      </td>
+                      <td className="px-6 py-4 font-semibold min-w-[200px] whitespace-normal">
+                        {item.spesifikasi}
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <div className="w-12 h-10 mx-auto bg-white border border-gray-200 rounded flex items-center justify-center p-1 overflow-hidden">
+                          {item.gambar ? (
+                            <img
+                              src={item.gambar}
+                              alt="img"
+                              className="w-full h-full object-contain"
+                            />
+                          ) : (
+                            <span className="text-xs text-gray-400">-</span>
+                          )}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-center font-bold">
+                        {item.jumlah}
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        {formatRupiah(item.hargaSatuan)}
+                      </td>
+                      <td className="px-6 py-4 text-center font-bold">
+                        {formatRupiah(item.totalHarga)}
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">
+                          Lihat Detail
                         </button>
-                        <button
-                          onClick={() =>
-                            handleDelete(item.id, item.spesifikasi)
-                          }
-                          className="text-red-600 hover:text-red-800 transition-colors"
-                          title="Hapus"
-                        >
-                          <IoTrashOutline size={18} />
-                        </button>
+                      </td>
+                      <td className="px-6 py-4 text-center font-bold text-blue-600 bg-blue-50/30">
+                        {item.kondisi.bagus}
+                      </td>
+                      <td className="px-6 py-4 text-center font-bold text-yellow-600 bg-yellow-50/30">
+                        {item.kondisi.diperbaiki}
+                      </td>
+                      <td className="px-6 py-4 text-center font-bold text-red-600 bg-red-50/30">
+                        {item.kondisi.rusak}
+                      </td>
+                      <td className="px-6 py-4 text-center">
+                        <div className="flex justify-center gap-2">
+                          <button
+                            className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition-colors"
+                            title="Edit"
+                          >
+                            <IoPencil size={18} />
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleDelete(item.id, item.spesifikasi)
+                            }
+                            className="p-2 rounded-full text-red-600 hover:bg-red-100 transition-colors"
+                            title="Hapus"
+                          >
+                            <IoTrashOutline size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="12" className="text-center py-12 text-gray-400">
+                      <div className="flex flex-col items-center">
+                        <IoDocumentTextOutline className="w-12 h-12 mb-2 opacity-20" />
+                        <p>Belum ada data detail untuk {selectedCategory}.</p>
                       </div>
                     </td>
                   </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="12" className="text-center py-12 text-gray-400">
-                    <div className="flex flex-col items-center">
-                      <IoDocumentTextOutline className="w-12 h-12 mb-2 opacity-20" />
-                      <p>Belum ada data detail untuk {selectedCategory}.</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* PAGINATION FOOTER */}
-        {filteredData.length > 0 && (
-          <div className="p-4 border-t border-white bg-white-50 flex justify-end items-center gap-4">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={handlePrevPage}
-                disabled={currentPage === 1}
-                className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-gray-600 disabled:cursor-not-allowed transition-colors"
-              >
-                <IoChevronBack className="w-5 h-5" />
-              </button>
-
-              <span className="px-4 py-2 bg-white border-gray-300 text-gray-700 rounded-lg text-sm font-semibold">
-                {currentPage}
-              </span>
-
-              <button
-                onClick={handleNextPage}
-                disabled={currentPage === totalPages}
-                className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-gray-600 disabled:cursor-not-allowed transition-colors"
-              >
-                <IoChevronForward className="w-5 h-5" />
-              </button>
-            </div>
+                )}
+              </tbody>
+            </table>
           </div>
-        )}
-      </div>
+
+          {/* PAGINATION FOOTER */}
+          {filteredData.length > 0 && (
+            <div className="p-4 border-t border-gray-200 bg-gray-50 flex justify-end items-center gap-4">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handlePrevPage}
+                  disabled={currentPage === 1}
+                  className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-gray-600 disabled:cursor-not-allowed transition-colors"
+                >
+                  <IoChevronBack className="w-5 h-5" />
+                </button>
+
+                <span className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-semibold">
+                  {currentPage} / {totalPages}
+                </span>
+
+                <button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  className="p-2 rounded-lg hover:bg-gray-200 disabled:opacity-50 text-gray-600 disabled:cursor-not-allowed transition-colors"
+                >
+                  <IoChevronForward className="w-5 h-5" />
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
 
       <Modal
         isOpen={isModalOpen}
@@ -360,6 +396,6 @@ export default function DetailBarang() {
           onSimpan={handleSimpanSpesifikasi}
         />
       </Modal>
-    </div>
+    </>
   );
 }

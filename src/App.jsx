@@ -24,7 +24,7 @@ function App() {
       icon: "success",
       title: "Berhasil logout!",
       showConfirmButton: false,
-      timer: 3000,
+      timer: 1500,
       timerProgressBar: true,
       didOpen: (toast) => {
         toast.onmouseenter = Swal.stopTimer;
@@ -38,7 +38,7 @@ function App() {
     if (route === "lobby") {
       return <LandingPage onSelectIT={handleSelectIT} />;
     } else if (route === "login") {
-      return <Login onLoginSuccess={() => setRoute("dashboard")} />;
+      return <Login onLoginSuccess={() => setRoute("lobby")} />;
     } else {
       return <Dashboard onLogout={handleLogout} />;
     }
