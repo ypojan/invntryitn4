@@ -1,5 +1,3 @@
-// src/Component/FormPengembalian.jsx
-
 import React, { useState } from "react";
 import Swal from "sweetalert2";
 import {
@@ -15,6 +13,7 @@ function FormPengembalian({ onClose, onSimpan }) {
     idBarang: "",
     spesifikasi: "",
     jumlah: "",
+    nama: "", // Field baru: Nama
     unit: "",
     suratFile: null,
     tandaTerimaFile: null,
@@ -40,7 +39,6 @@ function FormPengembalian({ onClose, onSimpan }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validasi Bilangan Asli
     const jumlahInt = parseInt(formData.jumlah);
     if (!jumlahInt || jumlahInt < 1) {
       Swal.fire(
@@ -59,6 +57,7 @@ function FormPengembalian({ onClose, onSimpan }) {
       tanggal: formattedDate,
       spesifikasi: formData.spesifikasi,
       jumlah: jumlahInt,
+      nama: formData.nama, // Kirim data nama
       unit: formData.unit,
       suratFile: formData.suratFile,
       tandaTerimaFile: formData.tandaTerimaFile,
@@ -68,7 +67,6 @@ function FormPengembalian({ onClose, onSimpan }) {
   };
 
   return (
-    // FIX RESPONSIVE: Hapus width 550px, ganti class responsive
     <form onSubmit={handleSubmit} className="w-full md:min-w-[500px]">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl md:text-2xl font-bold text-gray-800">
@@ -84,6 +82,7 @@ function FormPengembalian({ onClose, onSimpan }) {
       </div>
 
       <div className="max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
+        {/* Tanggal */}
         <div className="mb-4 relative">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Tanggal Pengembalian
@@ -99,6 +98,7 @@ function FormPengembalian({ onClose, onSimpan }) {
           <IoCalendarOutline className="absolute right-4 top-10 w-5 h-5 text-gray-400 pointer-events-none" />
         </div>
 
+        {/* ID Barang */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             ID Barang
@@ -114,6 +114,7 @@ function FormPengembalian({ onClose, onSimpan }) {
           />
         </div>
 
+        {/* Spesifikasi */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Spesifikasi
@@ -129,6 +130,7 @@ function FormPengembalian({ onClose, onSimpan }) {
           />
         </div>
 
+        {/* Jumlah Barang */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Jumlah Barang
@@ -145,6 +147,23 @@ function FormPengembalian({ onClose, onSimpan }) {
           />
         </div>
 
+        {/* Field NAMA (BARU) */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Nama Peminjam
+          </label>
+          <input
+            type="text"
+            name="nama"
+            value={formData.nama}
+            onChange={handleChange}
+            placeholder="Masukkan Nama Peminjam"
+            className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+        </div>
+
+        {/* Unit/Bagian */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Unit/Bagian

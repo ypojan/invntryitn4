@@ -13,6 +13,7 @@ function FormPeminjaman({ onClose, onSimpan }) {
     idBarang: "",
     spesifikasi: "",
     jumlah: "",
+    nama: "", // Field baru: Nama
     unit: "",
     suratFile: null,
     tandaTerimaFile: null,
@@ -56,6 +57,7 @@ function FormPeminjaman({ onClose, onSimpan }) {
       tanggal: formattedDate,
       spesifikasi: formData.spesifikasi,
       jumlah: jumlahInt,
+      nama: formData.nama, // Kirim data nama
       unit: formData.unit,
       suratFile: formData.suratFile,
       tandaTerimaFile: formData.tandaTerimaFile,
@@ -65,7 +67,6 @@ function FormPeminjaman({ onClose, onSimpan }) {
   };
 
   return (
-    // HAPUS style={{ width: 550px }} dan gunakan class responsive
     <form onSubmit={handleSubmit} className="w-full md:min-w-[500px]">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl md:text-2xl font-bold text-gray-800">Peminjaman Barang</h2>
@@ -78,7 +79,6 @@ function FormPeminjaman({ onClose, onSimpan }) {
         </button>
       </div>
 
-      {/* CONTAINER SCROLL UNTUK MOBILE */}
       <div className="max-h-[70vh] overflow-y-auto pr-2 custom-scrollbar">
         {/* Tanggal */}
         <div className="mb-4 relative">
@@ -139,7 +139,23 @@ function FormPeminjaman({ onClose, onSimpan }) {
             min="1"
             value={formData.jumlah}
             onChange={handleChange}
-            placeholder="Contoh: 1, 5"
+            placeholder="Masukkan Jumlah Barang"
+            className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
+            required
+          />
+        </div>
+
+        {/* Field NAMA (BARU) */}
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Nama Peminjam
+          </label>
+          <input
+            type="text"
+            name="nama"
+            value={formData.nama}
+            onChange={handleChange}
+            placeholder="Masukkan Nama Peminjam"
             className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
             required
           />
@@ -161,9 +177,8 @@ function FormPeminjaman({ onClose, onSimpan }) {
           />
         </div>
 
-        {/* File Uploads (Responsive Grid) */}
+        {/* File Uploads */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6 mb-8">
-          {/* Surat Peminjaman */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Surat Peminjaman
@@ -193,7 +208,6 @@ function FormPeminjaman({ onClose, onSimpan }) {
             </label>
           </div>
 
-          {/* Tanda Terima */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Tanda Terima

@@ -16,12 +16,14 @@ import {
 import Modal from "./common/Modal";
 import FormPengembalian from "./FormPengembalian.jsx";
 
+// Update Dummy Data
 const initialData = [
   {
     id: "01111",
     tanggal: "04/01/2025",
     spesifikasi: "MSI Stealth A16 Mercedes",
     jumlah: 1,
+    nama: "Gurt",
     unit: "Kepala Sub Bagian HPS",
   },
   {
@@ -29,6 +31,7 @@ const initialData = [
     tanggal: "05/01/2025",
     spesifikasi: "Lenovo Yoga",
     jumlah: 3,
+    nama: "thew", // Field Baru
     unit: "Pengadaan dan TI",
   },
 ];
@@ -46,13 +49,18 @@ export default function Pengembalian() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  // Filter Data (Update Nama)
   const filtered = data.filter((r) => {
     const q = query.trim().toLowerCase();
     if (!q && !date) return true;
+    
+    // Cek ID, Spesifikasi, Unit, dan NAMA
     const matchQ =
       r.id.toLowerCase().includes(q) ||
       r.spesifikasi.toLowerCase().includes(q) ||
+      (r.nama && r.nama.toLowerCase().includes(q)) || // Cek nama
       r.unit.toLowerCase().includes(q);
+
     const matchDate = date
       ? r.tanggal === formatDateInputToDisplay(date)
       : true;
@@ -189,7 +197,7 @@ export default function Pengembalian() {
                 id="search-input"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Cari Spesifikasi..."
+                placeholder="Cari Spesifikasi / Nama..."
                 className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") submitSearch();
@@ -251,6 +259,10 @@ export default function Pengembalian() {
                     Spesifikasi
                   </th>
                   <th className="px-6 py-4 text-left font-semibold">Jumlah</th>
+                  
+                  {/* Kolom Nama Baru */}
+                  <th className="px-6 py-4 text-left font-semibold">Nama Peminjam</th>
+                  
                   <th className="px-6 py-4 text-left font-semibold">
                     Unit/Bagian
                   </th>
@@ -267,7 +279,7 @@ export default function Pengembalian() {
                 {currentItems.length === 0 ? (
                   <tr>
                     <td
-                      colSpan="8"
+                      colSpan="9"
                       className="px-6 py-12 text-center text-gray-400"
                     >
                       <div className="flex flex-col items-center">
@@ -288,6 +300,12 @@ export default function Pengembalian() {
                         {row.spesifikasi}
                       </td>
                       <td className="px-6 py-4 font-bold">{row.jumlah}</td>
+
+                      {/* Tampilkan Data NAMA */}
+                      <td className="px-6 py-4 text-blue-600 font-medium capitalize">
+                        {row.nama || "-"}
+                      </td>
+
                       <td className="px-6 py-4">{row.unit}</td>
                       <td className="px-6 py-4">
                         <button

@@ -16,12 +16,14 @@ import {
 import Modal from "./common/Modal";
 import FormPeminjaman from "./FormPeminjaman.jsx";
 
+// Update Dummy Data
 const initialData = [
   {
     id: "01111",
     tanggal: "04/01/2025",
     spesifikasi: "MSI Stealth A16 Mercedes",
     jumlah: 1,
+    nama: "Gurt",
     unit: "Kepala Sub Bagian HPS",
   },
   {
@@ -29,6 +31,7 @@ const initialData = [
     tanggal: "05/01/2025",
     spesifikasi: "Lenovo Yoga",
     jumlah: 3,
+    nama: "thew", // Field Baru
     unit: "Pengadaan dan TI",
   },
 ];
@@ -42,24 +45,29 @@ export default function Peminjaman() {
 
   const { setRoute } = useContext(AppContext);
 
+  // --- PAGINATION STATE ---
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // FILTER DATA
+  // Filter Data (Update Nama)
   const filtered = data.filter((r) => {
     const q = query.trim().toLowerCase();
     if (!q && !date) return true;
+    
+    // Cek ID, Spesifikasi, Unit, dan NAMA
     const matchQ =
       r.id.toLowerCase().includes(q) ||
       r.spesifikasi.toLowerCase().includes(q) ||
+      (r.nama && r.nama.toLowerCase().includes(q)) || // Cek nama
       r.unit.toLowerCase().includes(q);
+
     const matchDate = date
       ? r.tanggal === formatDateInputToDisplay(date)
       : true;
     return matchQ && matchDate;
   });
 
-  // PAGINATION LOGIC
+  // --- LOGIKA PAGINATION ---
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -83,16 +91,14 @@ export default function Peminjaman() {
     return `${d}/${m}/${y}`;
   }
 
-  // FUNGSI TAMBAH DATA BARU
+  // HANDLE SIMPAN DATA
   const handleSimpanData = (newData) => {
-    // Tambahkan ke state data paling atas
     setData((prev) => [newData, ...prev]);
-
     Swal.fire({
       title: "Berhasil!",
-      text: "Data peminjaman berhasil ditambahkan.",
+      text: "Data peminjaman berhasil disimpan.",
       icon: "success",
-      timer: 1500,
+      timer: 2000,
       showConfirmButton: false,
     });
     setIsModalOpen(false);
@@ -126,22 +132,17 @@ export default function Peminjaman() {
   }
 
   function handleViewSurat(row) {
-    if (row.suratFile) {
-      // Jika ada file
-      const fileName = row.suratFile.name || "File Surat";
-      Swal.fire("Surat Peminjaman", `File: ${fileName}`, "info");
-    } else {
-      Swal.fire("Surat Peminjaman", `Detail surat ID: ${row.id}`, "info");
-    }
+    const fileName = row.suratFile
+      ? row.suratFile.name
+      : `Detail surat ID: ${row.id}`;
+    Swal.fire("Surat Peminjaman", fileName, "info");
   }
 
   function handleViewTandaTerima(row) {
-    if (row.tandaTerimaFile) {
-      const fileName = row.tandaTerimaFile.name || "File Tanda Terima";
-      Swal.fire("Tanda Terima", `File: ${fileName}`, "info");
-    } else {
-      Swal.fire("Tanda Terima", `Bukti tanda terima ID: ${row.id}`, "info");
-    }
+    const fileName = row.tandaTerimaFile
+      ? row.tandaTerimaFile.name
+      : `Bukti ID: ${row.id}`;
+    Swal.fire("Tanda Terima", fileName, "info");
   }
 
   function submitSearch() {
@@ -149,9 +150,8 @@ export default function Peminjaman() {
   }
   function focusDatePicker() {
     const el = document.getElementById("date-input");
-    if (!el) return;
-    if (typeof el.showPicker === "function") el.showPicker();
-    else el.focus();
+    if (el && typeof el.showPicker === "function") el.showPicker();
+    else el?.focus();
   }
 
   return (
@@ -192,13 +192,12 @@ export default function Peminjaman() {
                 <IoCalendarOutline className="w-4 h-4 text-gray-500" />
               </button>
             </div>
-
             <div className="relative flex-1 md:flex-none">
               <input
                 id="search-input"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Cari Spesifikasi..."
+                placeholder="Cari Spesifikasi / Nama..."
                 className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") submitSearch();
@@ -220,6 +219,9 @@ export default function Peminjaman() {
                        shadow-md shadow-blue-200 hover:from-blue-700 hover:to-blue-800 
                        hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 active:scale-95 
                        relative overflow-hidden group"
+              onClick={() =>
+                Swal.fire("Info", "Fitur Cetak belum tersedia", "info")
+              }
             >
               <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>
               <IoPrintOutline className="w-5 h-5" />
@@ -257,6 +259,10 @@ export default function Peminjaman() {
                     Spesifikasi
                   </th>
                   <th className="px-6 py-4 text-left font-semibold">Jumlah</th>
+                  
+                  {/* Kolom Nama Baru */}
+                  <th className="px-6 py-4 text-left font-semibold">Nama Peminjam</th>
+                  
                   <th className="px-6 py-4 text-left font-semibold">
                     Unit/Bagian
                   </th>
@@ -270,7 +276,19 @@ export default function Peminjaman() {
                 </tr>
               </thead>
               <tbody className="text-sm text-gray-800 divide-y divide-gray-200">
-                {currentItems.length > 0 ? (
+                {currentItems.length === 0 ? (
+                  <tr>
+                    <td
+                      colSpan="9"
+                      className="px-6 py-12 text-center text-gray-400"
+                    >
+                      <div className="flex flex-col items-center">
+                        <IoDocumentTextOutline className="w-12 h-12 mb-2 opacity-20" />
+                        <p>Tidak ada data peminjaman.</p>
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
                   currentItems.map((row) => (
                     <tr
                       key={row.id}
@@ -282,6 +300,12 @@ export default function Peminjaman() {
                         {row.spesifikasi}
                       </td>
                       <td className="px-6 py-4 font-bold">{row.jumlah}</td>
+
+                      {/* Tampilkan Data NAMA */}
+                      <td className="px-6 py-4 text-blue-600 font-medium capitalize">
+                        {row.nama || "-"}
+                      </td>
+
                       <td className="px-6 py-4">{row.unit}</td>
                       <td className="px-6 py-4">
                         <button
@@ -317,15 +341,6 @@ export default function Peminjaman() {
                       </td>
                     </tr>
                   ))
-                ) : (
-                  <tr>
-                    <td colSpan="8" className="text-center py-12 text-gray-400">
-                      <div className="flex flex-col items-center">
-                        <IoDocumentTextOutline className="w-12 h-12 mb-2 opacity-20" />
-                        <p>Tidak ada data peminjaman.</p>
-                      </div>
-                    </td>
-                  </tr>
                 )}
               </tbody>
             </table>
@@ -342,7 +357,7 @@ export default function Peminjaman() {
                 >
                   <IoChevronBack className="w-5 h-5" />
                 </button>
-                <span className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-semibold ">
+                <span className="px-4 py-2 bg-white border border-gray-300 text-gray-700 rounded-lg text-sm font-semibold shadow-sm">
                   {currentPage} / {totalPages}
                 </span>
                 <button
