@@ -23,7 +23,7 @@ const initialData = [
     tanggal: "04/01/2025",
     spesifikasi: "MSI Stealth A16 Mercedes",
     jumlah: 1,
-    nama: "Gurt",
+    nama: "Budi Santoso", 
     unit: "Kepala Sub Bagian HPS",
   },
   {
@@ -31,7 +31,7 @@ const initialData = [
     tanggal: "05/01/2025",
     spesifikasi: "Lenovo Yoga",
     jumlah: 3,
-    nama: "thew", // Field Baru
+    nama: "Siti Aminah", 
     unit: "Pengadaan dan TI",
   },
 ];
@@ -49,18 +49,25 @@ export default function Pengembalian() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
-  // Filter Data (Update Nama)
+  // --- HELPER FORMAT TANGGAL ---
+  function formatDateInputToDisplay(value) {
+    if (!value) return "";
+    const [y, m, d] = value.split("-");
+    return `${d}/${m}/${y}`;
+  }
+
+  // Filter Data (Update Nama & Date)
   const filtered = data.filter((r) => {
     const q = query.trim().toLowerCase();
-    if (!q && !date) return true;
     
-    // Cek ID, Spesifikasi, Unit, dan NAMA
+    // 1. Filter Search
     const matchQ =
       r.id.toLowerCase().includes(q) ||
       r.spesifikasi.toLowerCase().includes(q) ||
-      (r.nama && r.nama.toLowerCase().includes(q)) || // Cek nama
+      (r.nama && r.nama.toLowerCase().includes(q)) || 
       r.unit.toLowerCase().includes(q);
 
+    // 2. Filter Date (FIXED LOGIC)
     const matchDate = date
       ? r.tanggal === formatDateInputToDisplay(date)
       : true;
@@ -85,10 +92,22 @@ export default function Pengembalian() {
     setCurrentPage(1);
   }, [query, date]);
 
-  function formatDateInputToDisplay(value) {
-    if (!value) return "";
-    const [y, m, d] = value.split("-");
-    return `${d}/${m}/${y}`;
+  // --- FUNGSI UTILS DATE PICKER (FIXED) ---
+  function focusDatePicker() {
+    const el = document.getElementById("date-input-pengembalian");
+    if (!el) return;
+    
+    // Paksa ubah tipe ke 'date' dulu
+    setDateInputType("date");
+    
+    // Delay sedikit agar browser merender tipe date, baru buka picker
+    setTimeout(() => {
+      if (typeof el.showPicker === "function") {
+        el.showPicker();
+      } else {
+        el.focus();
+      }
+    }, 50);
   }
 
   // HANDLE SIMPAN DATA
@@ -116,10 +135,8 @@ export default function Pengembalian() {
       showCancelButton: true,
       customClass: {
         popup: "rounded-2xl p-6",
-        confirmButton:
-          "bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 mx-2",
-        cancelButton:
-          "bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 mx-2",
+        confirmButton: "bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 mx-2",
+        cancelButton: "bg-red-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-red-700 mx-2",
       },
       confirmButtonText: "Ya, Hapus",
       cancelButtonText: "Batal",
@@ -132,26 +149,17 @@ export default function Pengembalian() {
   }
 
   function handleViewSurat(row) {
-    const fileName = row.suratFile
-      ? row.suratFile.name
-      : `Detail surat ID: ${row.id}`;
+    const fileName = row.suratFile?.name || `Detail surat ID: ${row.id}`;
     Swal.fire("Surat Pengembalian", fileName, "info");
   }
 
   function handleViewTandaTerima(row) {
-    const fileName = row.tandaTerimaFile
-      ? row.tandaTerimaFile.name
-      : `Bukti ID: ${row.id}`;
+    const fileName = row.tandaTerimaFile?.name || `Bukti ID: ${row.id}`;
     Swal.fire("Tanda Terima", fileName, "info");
   }
 
   function submitSearch() {
     document.getElementById("search-input")?.blur();
-  }
-  function focusDatePicker() {
-    const el = document.getElementById("date-input");
-    if (el && typeof el.showPicker === "function") el.showPicker();
-    else el?.focus();
   }
 
   return (
@@ -171,9 +179,10 @@ export default function Pengembalian() {
       <section>
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
           <div className="flex items-center gap-3 w-full md:w-auto">
+             {/* DATE INPUT DENGAN LOGIKA BARU */}
             <div className="relative">
               <input
-                id="date-input"
+                id="date-input-pengembalian" // ID Unik
                 type={dateInputType}
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
@@ -187,7 +196,7 @@ export default function Pengembalian() {
               <button
                 type="button"
                 onClick={focusDatePicker}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded hover:bg-gray-100"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded hover:bg-gray-100 transition-colors"
               >
                 <IoCalendarOutline className="w-4 h-4 text-gray-500" />
               </button>
@@ -259,10 +268,7 @@ export default function Pengembalian() {
                     Spesifikasi
                   </th>
                   <th className="px-6 py-4 text-left font-semibold">Jumlah</th>
-                  
-                  {/* Kolom Nama Baru */}
                   <th className="px-6 py-4 text-left font-semibold">Nama Peminjam</th>
-                  
                   <th className="px-6 py-4 text-left font-semibold">
                     Unit/Bagian
                   </th>
@@ -294,18 +300,13 @@ export default function Pengembalian() {
                       key={row.id}
                       className="hover:bg-blue-50 transition-colors"
                     >
-                      <td className="px-6 py-4">{row.tanggal}</td>
-                      <td className="px-6 py-4">{row.id}</td>
+                      <td className="px-6 py-4 font-medium">{row.tanggal}</td>
+                      <td className="px-6 py-4 font-medium">{row.id}</td>
                       <td className="px-6 py-4 max-w-xs truncate font-medium">
                         {row.spesifikasi}
                       </td>
-                      <td className="px-6 py-4 font-bold">{row.jumlah}</td>
-
-                      {/* Tampilkan Data NAMA */}
-                      <td className="px-6 py-4 text-blue-600 font-medium capitalize">
-                        {row.nama || "-"}
-                      </td>
-
+                      <td className="px-6 py-4 font-medium">{row.jumlah}</td>
+                      <td className="px-6 py-4 font-medium capitalize">{row.nama || "-"}</td>
                       <td className="px-6 py-4">{row.unit}</td>
                       <td className="px-6 py-4">
                         <button

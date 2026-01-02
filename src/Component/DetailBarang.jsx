@@ -1,5 +1,3 @@
-// src/Component/DetailBarang.jsx
-
 import React, { useContext, useState, useEffect } from "react";
 import { AppContext } from "../Context/AppContext";
 import Swal from "sweetalert2";
@@ -13,7 +11,7 @@ import {
   IoDocumentTextOutline,
   IoChevronBack,
   IoChevronForward,
-  IoCalendarOutline, // Tambahan icon calendar
+  IoCalendarOutline,
 } from "react-icons/io5";
 import Modal from "./common/Modal";
 import FormTambahSpesifikasi from "./FormTambahSpesifikasi.jsx";
@@ -22,29 +20,36 @@ export default function DetailBarang() {
   const { setRoute, selectedCategory, detailBarangData } = useContext(AppContext);
   
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedDate, setSelectedDate] = useState(""); // Ganti nama biar jelas
-  const [dateInputType, setDateInputType] = useState("text"); // State untuk tipe input tanggal
+  const [selectedDate, setSelectedDate] = useState(""); 
+  const [dateInputType, setDateInputType] = useState("text"); 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [localData, setLocalData] = useState(detailBarangData);
 
-  // --- PAGINATION STATE ---
+
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  function formatDateInputToDisplay(value) {
+    if (!value) return "";
+    const [y, m, d] = value.split("-");
+    return `${d}/${m}/${y}`;
+  }
+
   // --- LOGIKA FILTER DATA ---
   const filteredData = localData.filter((item) => {
-    // Filter by Category
+    // 1. Filter by Category
     if (item.kategori !== selectedCategory) return false;
 
-    // Filter by Search Term
+    // 2. Filter by Search Term
     const matchSearch = 
       item.spesifikasi.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.id.toLowerCase().includes(searchTerm.toLowerCase());
-    
-    // Filter by Date (Asumsi format tanggal di data dd/mm/yyyy atau yyyy-mm-dd)
-    // Jika format data berbeda, sesuaikan logika ini
-    const matchDate = selectedDate ? item.tanggal.includes(selectedDate) : true;
+
+    // 3. Filter by Selected Date
+    const matchDate = selectedDate 
+      ? item.tanggal === formatDateInputToDisplay(selectedDate)
+      : true;
 
     return matchSearch && matchDate;
   });
@@ -63,7 +68,6 @@ export default function DetailBarang() {
     if (currentPage > 1) setCurrentPage((prev) => prev - 1);
   };
 
-  // Reset pagination ke halaman 1 jika filter berubah
   useEffect(() => {
     setCurrentPage(1);
   }, [searchTerm, selectedCategory, selectedDate]);
@@ -76,12 +80,20 @@ export default function DetailBarang() {
     }).format(number);
   };
 
-  // --- FUNGSI UTILS UNTUK DATE PICKER ---
+
   function focusDatePicker() {
     const el = document.getElementById("date-input-detail");
     if (!el) return;
-    if (typeof el.showPicker === "function") el.showPicker();
-    else el.focus();
+    
+    setDateInputType("date");
+
+    setTimeout(() => {
+      if (typeof el.showPicker === "function") {
+        el.showPicker();
+      } else {
+        el.focus();
+      }
+    }, 50);
   }
 
   // --- FUNGSI HAPUS ---
@@ -141,7 +153,7 @@ export default function DetailBarang() {
     };
 
     setLocalData((prev) => [newItem, ...prev]);
-    setIsModalOpen(false); // Tutup modal setelah simpan
+    setIsModalOpen(false); 
     Swal.fire("Berhasil", "Data berhasil ditambahkan", "success");
   };
 
@@ -165,7 +177,8 @@ export default function DetailBarang() {
         {/* FILTER & ACTION BAR */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
           <div className="flex items-center gap-3 w-full md:w-auto">
-            {/* Input Tanggal Style Peminjaman */}
+            
+            {/* Input Tanggal */}
             <div className="relative">
               <input
                 id="date-input-detail"
@@ -182,7 +195,7 @@ export default function DetailBarang() {
               <button
                 type="button"
                 onClick={focusDatePicker}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded hover:bg-gray-100"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded hover:bg-gray-100 transition-colors"
               >
                 <IoCalendarOutline className="w-4 h-4 text-gray-500" />
               </button>
@@ -238,35 +251,17 @@ export default function DetailBarang() {
             <table className="min-w-full text-sm whitespace-nowrap">
               <thead className="bg-slate-700 text-white uppercase">
                 <tr>
-                  <th className="px-6 py-4 text-center font-semibold">
-                    Tanggal
-                  </th>
-                  <th className="px-6 py-4 text-center font-semibold">
-                    ID Barang
-                  </th>
-                  <th className="px-6 py-4 text-left font-semibold">
-                    Spesifikasi
-                  </th>
+                  <th className="px-6 py-4 text-center font-semibold">Tanggal</th>
+                  <th className="px-6 py-4 text-center font-semibold">ID Barang</th>
+                  <th className="px-6 py-4 text-left font-semibold">Spesifikasi</th>
                   <th className="px-6 py-4 text-center font-semibold">Gambar</th>
                   <th className="px-6 py-4 text-center font-semibold">Jumlah</th>
-                  <th className="px-6 py-4 text-center font-semibold">
-                    Harga Satuan
-                  </th>
-                  <th className="px-6 py-4 text-center font-semibold">
-                    Total Harga
-                  </th>
-                  <th className="px-6 py-4 text-center font-semibold">
-                    Kwitansi
-                  </th>
-                  <th className="px-6 py-4 text-center font-semibold bg-blue-600 text-white">
-                    Bagus
-                  </th>
-                  <th className="px-6 py-4 text-center font-semibold bg-yellow-600 text-white">
-                    Diperbaiki
-                  </th>
-                  <th className="px-6 py-4 text-center font-semibold bg-red-600 text-white">
-                    Rusak
-                  </th>
+                  <th className="px-6 py-4 text-center font-semibold">Harga Satuan</th>
+                  <th className="px-6 py-4 text-center font-semibold">Total Harga</th>
+                  <th className="px-6 py-4 text-center font-semibold">Kwitansi</th>
+                  <th className="px-6 py-4 text-center font-semibold bg-blue-600 text-white">Bagus</th>
+                  <th className="px-6 py-4 text-center font-semibold bg-yellow-600 text-white">Diperbaiki</th>
+                  <th className="px-6 py-4 text-center font-semibold bg-red-600 text-white">Rusak</th>
                   <th className="px-6 py-4 text-center font-semibold">Aksi</th>
                 </tr>
               </thead>
@@ -280,7 +275,7 @@ export default function DetailBarang() {
                       <td className="px-6 py-4 text-center font-medium">
                         {item.tanggal}
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td className="px-6 py-4 text-center font-medium">
                         {item.id}
                       </td>
                       <td className="px-6 py-4 font-semibold min-w-[200px] whitespace-normal">
@@ -299,13 +294,13 @@ export default function DetailBarang() {
                           )}
                         </div>
                       </td>
-                      <td className="px-6 py-4 text-center font-bold">
+                      <td className="px-6 py-4 text-center font-medium">
                         {item.jumlah}
                       </td>
-                      <td className="px-6 py-4 text-center">
+                      <td className="px-6 py-4 text-center font-medium">
                         {formatRupiah(item.hargaSatuan)}
                       </td>
-                      <td className="px-6 py-4 text-center font-bold">
+                      <td className="px-6 py-4 text-center font-medium">
                         {formatRupiah(item.totalHarga)}
                       </td>
                       <td className="px-6 py-4 text-center">
@@ -324,12 +319,16 @@ export default function DetailBarang() {
                       </td>
                       <td className="px-6 py-4 text-center">
                         <div className="flex justify-center gap-2">
+                          
+                          {/* TOMBOL EDIT DENGAN NOTIFIKASI */}
                           <button
                             className="p-2 rounded-full text-blue-600 hover:bg-blue-100 transition-colors"
                             title="Edit"
+                            onClick={() => Swal.fire("Info", "Fitur edit segera hadir!", "info")}
                           >
                             <IoPencil size={18} />
                           </button>
+
                           <button
                             onClick={() =>
                               handleDelete(item.id, item.spesifikasi)

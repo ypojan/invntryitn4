@@ -13,7 +13,7 @@ function FormPeminjaman({ onClose, onSimpan }) {
     idBarang: "",
     spesifikasi: "",
     jumlah: "",
-    nama: "", // Field baru: Nama
+    nama: "", 
     unit: "",
     suratFile: null,
     tandaTerimaFile: null,
@@ -57,7 +57,7 @@ function FormPeminjaman({ onClose, onSimpan }) {
       tanggal: formattedDate,
       spesifikasi: formData.spesifikasi,
       jumlah: jumlahInt,
-      nama: formData.nama, // Kirim data nama
+      nama: formData.nama,
       unit: formData.unit,
       suratFile: formData.suratFile,
       tandaTerimaFile: formData.tandaTerimaFile,
@@ -65,6 +65,16 @@ function FormPeminjaman({ onClose, onSimpan }) {
 
     onSimpan(newData);
   };
+
+  // --- FUNGSI UNTUK MEMBUKA KALENDER ---
+  function focusDatePicker() {
+    const el = document.getElementById("date-input-peminjaman-form");
+    if (el && typeof el.showPicker === "function") {
+      el.showPicker();
+    } else {
+      el?.focus();
+    }
+  }
 
   return (
     <form onSubmit={handleSubmit} className="w-full md:min-w-[500px]">
@@ -86,6 +96,7 @@ function FormPeminjaman({ onClose, onSimpan }) {
             Tanggal Peminjaman
           </label>
           <input
+            id="date-input-peminjaman-form" // ID Ditambahkan
             type="date"
             name="tanggal"
             value={formData.tanggal}
@@ -93,7 +104,11 @@ function FormPeminjaman({ onClose, onSimpan }) {
             className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400 text-gray-700"
             required
           />
-          <IoCalendarOutline className="absolute right-4 top-10 w-5 h-5 text-gray-400 pointer-events-none" />
+          {/* Icon dengan onClick */}
+          <IoCalendarOutline 
+            onClick={focusDatePicker}
+            className="absolute right-4 top-10 w-5 h-5 text-gray-400 cursor-pointer hover:text-blue-500 transition-colors" 
+          />
         </div>
 
         {/* ID Barang */}
@@ -139,13 +154,13 @@ function FormPeminjaman({ onClose, onSimpan }) {
             min="1"
             value={formData.jumlah}
             onChange={handleChange}
-            placeholder="Masukkan Jumlah Barang"
+            placeholder="Contoh: 1, 5"
             className="w-full px-4 py-3 rounded-lg bg-blue-50 border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-400"
             required
           />
         </div>
 
-        {/* Field NAMA (BARU) */}
+        {/* Field NAMA */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Nama Peminjam

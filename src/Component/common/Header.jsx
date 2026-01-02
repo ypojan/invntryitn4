@@ -5,7 +5,6 @@ import Swal from "sweetalert2";
 import { Dropdown, Menu } from "antd";
 import { UserOutlined, LogoutOutlined, MenuOutlined } from "@ant-design/icons";
 
-// Terima prop toggleSidebar
 function Header({ toggleSidebar }) {
   const { setRoute } = useContext(AppContext);
   const [username, setUsername] = useState("User");
@@ -69,7 +68,7 @@ function Header({ toggleSidebar }) {
       <div className="flex items-center justify-between">
 
         <div className="flex items-center gap-3">
-            {/* Hamburger */}
+            {/* Hamburger (Mobile Only) */}
             <button 
               onClick={toggleSidebar}
               className="md:hidden text-2xl text-slate-700 hover:text-blue-600 transition-colors"
@@ -80,7 +79,9 @@ function Header({ toggleSidebar }) {
             <img 
               src={logoptpn4} 
               alt="Logo PTPN IV" 
-              className="h-10 md:h-12 w-auto object-contain hover:scale-105 transition-transform" 
+              onClick={() => setRoute("lobby")}
+              className="h-10 md:h-12 w-auto object-contain hover:scale-105 transition-transform cursor-pointer" 
+              title="Kembali ke Halaman Utama"
             />
         </div>
 

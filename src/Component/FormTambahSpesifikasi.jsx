@@ -108,6 +108,16 @@ export default function FormTambahSpesifikasi({ onClose, onSimpan }) {
     });
   };
 
+  // --- FUNGSI TRIGGER KALENDER ---
+  function focusDatePicker() {
+    const el = document.getElementById("date-input-spesifikasi");
+    if (el && typeof el.showPicker === "function") {
+      el.showPicker();
+    } else {
+      el?.focus();
+    }
+  }
+
   return (
     <form onSubmit={handleSubmit} className="p-4 px-6">
       {/* Header */}
@@ -130,14 +140,18 @@ export default function FormTambahSpesifikasi({ onClose, onSimpan }) {
           </label>
           <div className="relative">
             <input
+              id="date-input-spesifikasi" // Tambahkan ID
               type="date"
               name="tanggal"
               value={formData.tanggal}
               onChange={handleChange}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg outline-none bg-white shadow-sm"
             />
-            {/* Ikon kalender (opsional, browser modern sudah punya ikon date picker sendiri) */}
-            {/* <IoCalendarOutline className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" /> */}
+            {/* Icon Kalender yang bisa diklik */}
+            <IoCalendarOutline 
+              onClick={focusDatePicker}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 cursor-pointer hover:text-blue-500 transition-colors" 
+            />
           </div>
         </div>
 
